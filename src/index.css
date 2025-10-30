@@ -1,0 +1,426 @@
+/* ========================================
+   IMPORTS
+   ======================================== */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: all;
+}
+@plugin "daisyui/theme" {
+    name: "panjea";
+    default: true;
+    prefersdark: false;
+    color-scheme: "panjea";
+    --color-base-100: oklch(100% 0 0);
+    --color-base-200: oklch(98% 0 0);
+    --color-base-300: oklch(95% 0 0);
+    --color-base-content: oklch(21% 0.006 285.885);
+    --color-primary: #146865;
+    --color-primary-content: oklch(93% 0.034 272.788);
+    --color-secondary: #DC9E53;
+    --color-secondary-content: oklch(98% 0.003 247.858);
+    --color-accent: #F4A261;
+    --color-accent-content: oklch(98% 0.003 247.858);
+    --color-neutral: #1A1A1A;
+    --color-neutral-content: oklch(92% 0.004 286.32);
+    --color-info: oklch(92% 0.004 286.32);
+    --color-info-content: oklch(29% 0.066 243.157);
+    --color-success: #45AF95;
+    --color-success-content: oklch(98% 0.003 247.858);
+    --color-warning: #E9C46A;
+    --color-warning-content: oklch(41% 0.112 45.904);
+    --color-error: #E76F51;
+    --color-error-content: oklch(27% 0.105 12.094);
+    --radius-selector: 0.5rem;
+    --radius-field: 0.5rem;
+    --radius-box: 0.5rem;
+    --size-selector: 0.28125rem;
+    --size-field: 0.28125rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
+}
+
+@import "flag-icons/css/flag-icons.min.css";
+/* ========================================
+   GLOBAL STYLES
+   ======================================== */
+* {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* ========================================
+   INPUT OVERRIDES
+   ======================================== */
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+    background-color: white !important;
+    color: #1A1A1A !important;
+    border-color: #d1d5db !important; /* gray-300 */
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus {
+    outline: none !important;
+    ring: 2px !important;
+    ring-color: #146865 !important; /* color-main */
+    border-color: transparent !important;
+}
+
+/* ========================================
+   CUSTOM COLOR UTILITIES
+   ======================================== */
+.text-color-light {
+    color: #F7F2EC;
+}
+
+.text-color-dark {
+    color: #1A1A1A;
+}
+
+.text-color-main {
+    color: #146865;
+}
+
+.text-color-secondary {
+    color: #DC9E53;
+}
+
+.bg-color-light {
+    background-color: #F7F2EC;
+}
+
+.bg-color-dark {
+    background-color: #1A1A1A;
+}
+
+.bg-color-main {
+    background-color: #146865;
+}
+
+.bg-color-secondary {
+    background-color: #DC9E53;
+}
+
+.border-color-secondary {
+    border: 2px solid #DC9E53;
+}
+
+/* ========================================
+   CUSTOM UTILITIES
+   ======================================== */
+.text-title {
+    font-size: clamp(1rem, 6vw, 2rem);
+    font-weight: 600;
+}
+
+.truncate-text{
+     overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.btn-secondary {
+    background-color: #DC9E53;
+    color: white;
+    border-radius: 12px;
+    font-weight: 600;
+    display: flex;
+    padding: 0.8rem;
+}
+
+.bg-gradient-main {
+    background: linear-gradient(to bottom, #45AF95, #146865);
+}
+
+.footer-gradient {
+    background: linear-gradient(to bottom, #2B2B2B, #1A1A1A);
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in-delay {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+}
+
+.animate-fade-in-delay {
+    animation: fade-in-delay 0.5s ease-out 0.1s both;
+}
+
+.animate-shake {
+    animation: shake 0.3s ease-in-out;
+}
+
+/* ========================================
+   RANGE INPUT STYLES
+   ======================================== */
+input[type="range"].budget-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: #E5E7EB;
+    outline: none;
+}
+
+input[type="range"].budget-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--range-color, #45AF95);
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: -8px;
+}
+
+input[type="range"].budget-range::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--range-color, #45AF95);
+    cursor: pointer;
+    border: 3px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: -8px;
+}
+
+input[type="range"].budget-range::-webkit-slider-runnable-track {
+    background: var(--range-gradient);
+    height: 8px;
+    border-radius: 5px;
+}
+
+input[type="range"].budget-range::-moz-range-track {
+    background: var(--range-gradient);
+    height: 8px;
+    border-radius: 5px;
+}
+
+/* ========================================
+   AIR-DATEPICKER CUSTOM STYLES
+   ======================================== */
+.air-datepicker {
+    border: 2px solid #146865;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    font-family: 'Montserrat', sans-serif;
+    background: white;
+}
+
+.air-datepicker-nav {
+    background: #146865;
+    border-radius: 0.75rem 0.75rem 0 0;
+    padding: 1rem;
+    border: none;
+}
+
+.air-datepicker-nav--title,
+.air-datepicker-nav--title *,
+.air-datepicker-nav--title i,
+.-year-,
+.-month-,
+.-day- {
+    color: white !important;
+    font-weight: 700;
+}
+
+.air-datepicker-nav--title:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.air-datepicker-nav--action {
+    color: white !important;
+}
+
+.air-datepicker-nav--action:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.air-datepicker-nav--action svg,
+.air-datepicker-nav--action svg path {
+    stroke: white !important;
+    fill: none !important;
+}
+
+.air-datepicker-nav--action path {
+    stroke: white !important;
+}
+
+.air-datepicker-body--day-name {
+    color: #9CA3AF !important;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.air-datepicker-cell {
+    color: #1A1A1A !important;
+    border-radius: 0.5rem;
+}
+
+.air-datepicker-cell:hover {
+    background: #F7F2EC !important;
+    color: #1A1A1A !important;
+}
+
+.air-datepicker-cell.-selected- {
+    background: #146865 !important;
+    color: white !important;
+}
+
+.air-datepicker-cell.-selected-:hover {
+    background: #0d4f4d !important;
+}
+
+.air-datepicker-cell.-current- {
+    border: 2px solid #DC9E53 !important;
+    color: #1A1A1A !important;
+}
+
+.air-datepicker-cell.-current-.-selected- {
+    border-color: #146865 !important;
+}
+
+.air-datepicker-cell.-disabled- {
+    color: #D1D5DB !important;
+    background: transparent !important;
+}
+
+.air-datepicker-cell.-range-from-,
+.air-datepicker-cell.-range-to- {
+    background: #146865 !important;
+    color: white !important;
+}
+
+.air-datepicker-cell.-in-range- {
+    background: rgba(20, 104, 101, 0.1) !important;
+    color: #1A1A1A !important;
+}
+
+.air-datepicker-cell.-focus- {
+    background: #F7F2EC !important;
+}
+
+.air-datepicker--pointer {
+    border-top-color: #146865 !important;
+}
+
+.air-datepicker-buttons {
+    border-top: 1px solid #E5E7EB;
+    padding: 0.75rem;
+}
+
+.air-datepicker-button {
+    color: #146865 !important;
+    font-weight: 600;
+}
+
+.air-datepicker-button:hover {
+    background: #F7F2EC !important;
+    color: #146865 !important;
+}
+
+/* ========================================
+   INPUT OVERRIDES
+   ======================================== */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    background-color: white !important;
+    color: #1A1A1A !important;
+    border-color: #d1d5db !important;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+    outline: none !important;
+    border-color: #146865 !important;
+    box-shadow: 0 0 0 2px rgba(20, 104, 101, 0.1) !important;
+}
+
+.input-bordered {
+    border-color: #d1d5db !important;
+}
+
+.input-bordered:focus,
+.input-bordered:focus-within {
+    border-color: #146865 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(20, 104, 101, 0.1) !important;
+}
+
+.input:focus {
+    border-color: #146865 !important;
+    outline: none !important;
+}
+
+.test {
+    border: 1px solid red;
+}
+
+.border-color-main {
+    border: 2px #146865 solid;
+}
+
+.container-app {
+    @apply w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:max-w-7xl;
+}
+
+.container-app-wide {
+    @apply w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:max-w-[1400px];
+}
+
+.container-app-narrow {
+    @apply w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:max-w-5xl;
+}
+
+
+
+@import "uploadthing/tw/v4";

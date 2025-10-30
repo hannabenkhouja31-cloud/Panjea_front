@@ -1,0 +1,33 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build:staging": "tsc -b && vite build --mode staging",
+    "build:prod": "tsc -b && vite build --mode production",
+    "preview:staging": "vite preview --mode staging",
+    "preview:prod": "vite preview --mode production"
+  },
+  "dependencies": {
+    "@solidjs/router": "^0.15.3",
+    "@stackframe/js": "^2.8.41",
+    "@tailwindcss/vite": "^4.1.13",
+    "@tanstack/solid-query": "^5.89.0",
+    "@uploadthing/solid": "^7.3.3",
+    "air-datepicker": "^3.6.0",
+    "flag-icons": "^7.5.0",
+    "lucide-solid": "^0.544.0",
+    "socket.io-client": "^4.8.1",
+    "solid-js": "^1.9.8",
+    "tailwindcss": "^4.1.13",
+    "uploadthing": "^7.7.4"
+  },
+  "devDependencies": {
+    "daisyui": "^5.1.26",
+    "typescript": "~5.8.3",
+    "vite": "^7.1.2",
+    "vite-plugin-solid": "^2.11.8"
+  }
+}
