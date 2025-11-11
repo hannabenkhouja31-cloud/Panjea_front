@@ -21,7 +21,7 @@ import { checkUserBanStatus } from './utils/banUtils.ts';
 import BannedPage from './pages/SignPage/BannedPage.tsx';
 
 
-const VoyagePage = lazy(() => import("./pages/Voyage/VoyagePage.tsx"));
+const VoyagePage = lazy(() => import("./pages/Voyage/VoyageList/index.tsx"));
 const CreateTripPage = lazy(() => import("./pages/Voyage/CreateTrip/CreateTripPage.tsx"));
 const VoyageDetailPage = lazy(() => import("./pages/Voyage/VoyageDetail/index.tsx"));
 const ProfilePage = lazy(() => import("./pages/Profile/ProfilePage.tsx"));
@@ -159,7 +159,7 @@ const Layout = (props:any) => {
     return (
         <>
             <Show when={backend.isConnected}>
-                <div class={"flex flex-col bg-color-light w-screen min-h-screen"}>
+                <div class={"flex flex-col bg-color-light min-h-screen"}>
                     <Header />
                     <Suspense fallback={
                         <div class="flex-1 flex items-center justify-center">
