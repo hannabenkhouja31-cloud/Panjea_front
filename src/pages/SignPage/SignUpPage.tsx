@@ -1,8 +1,8 @@
 import { createSignal } from "solid-js";
 import { A, useNavigate } from "@solidjs/router";
 import { Eye, EyeOff } from "lucide-solid";
-import { backend } from "../stores/configStore";
-import { setRegisterEmail, setRegisterPassword } from "../stores/userStore";
+import { backend } from "../../stores/configStore";
+import { setRegisterEmail, setRegisterPassword } from "../../stores/userStore";
 
 export const SignUpPage = () => {
 

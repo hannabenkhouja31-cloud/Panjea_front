@@ -1,10 +1,10 @@
 import { createSignal } from "solid-js";
 import { A } from "@solidjs/router";
 import { Eye, EyeOff } from "lucide-solid";
-import { backend, getNeonApp } from "../stores/configStore";
-import { getUserFromDatabase, getUserTripsFromDatabase, login, setUserProfile, setUserTrips } from "../stores/userStore";
-import { startLoading, stopLoading } from "../stores/loaderStore";
-import { getAllTrips } from "../stores/tripStore";
+import { backend, getNeonApp } from "../../stores/configStore";
+import { getUserFromDatabase, getUserTripsFromDatabase, login, setUserProfile, setUserTrips } from "../../stores/userStore";
+import { startLoading, stopLoading } from "../../stores/loaderStore";
+import { getAllTrips } from "../../stores/tripStore";
 
 export const SignInPage = () => {
 

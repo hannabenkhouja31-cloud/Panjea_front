@@ -6,11 +6,15 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 interface MessagesStore {
   messagesByTrip: Record<string, Message[]>;
   metaByTrip: Record<string, { page: number; hasMore: boolean }>;
+  unansweredQuestions: Message[];
+  questionTrips: any[];
 }
 
 const [messagesStore, setMessagesStore] = createStore<MessagesStore>({
   messagesByTrip: {},
   metaByTrip: {},
+  unansweredQuestions: [],
+  questionTrips: [],
 });
 
 const getMessagesByTripId = async (tripId: string, userId: string, page: number = 1, append: boolean = false) => {
@@ -189,6 +193,115 @@ const updateMessage = (updatedMessage: Message) => {
   }
 };
 
+const getUnansweredQuestions = async (userId: string) => {
+  console.log('[getUnansweredQuestions] Début - userId:', userId);
+  
+  try {
+    const response = await fetch(`${backendUrl}/messages/my-unanswered-questions`, {
+      headers: {
+        'x-user-id': userId,
+      },
+    });
+    
+    console.log('[getUnansweredQuestions] Response status:', response.status);
+    
+    if (response.status === 200) {
+      const unansweredQuestions = await response.json();
+      console.log('[getUnansweredQuestions] Réponses non lues reçues:', unansweredQuestions);
+      console.log('[getUnansweredQuestions] Nombre de réponses:', unansweredQuestions.length);
+      
+      setMessagesStore("unansweredQuestions", unansweredQuestions);
+      
+      return { success: true, data: unansweredQuestions };
+    } else {
+      console.log('[getUnansweredQuestions] Erreur - status:', response.status);
+      return { success: false, error: "Erreur lors de la récupération des questions" };
+    }
+  } catch (error) {
+    console.error('[getUnansweredQuestions] Exception:', error);
+    return { success: false, error: "Impossible de communiquer avec le backend" };
+  }
+};
+
+const markTripQuestionsAsRead = async (tripId: string, userId: string) => {
+  console.log('[markTripQuestionsAsRead] Début - tripId:', tripId, 'userId:', userId);
+  
+  try {
+    const response = await fetch(`${backendUrl}/messages/mark-trip-questions-read/${tripId}`, {
+      method: 'POST',
+      headers: {
+        'x-user-id': userId,
+      },
+    });
+    
+    console.log('[markTripQuestionsAsRead] Response status:', response.status);
+    
+    if (response.status === 200) {
+      console.log('[markTripQuestionsAsRead] Succès - questions marquées comme lues');
+      
+      setMessagesStore(
+        "unansweredQuestions", 
+        messagesStore.unansweredQuestions.filter(q => q.tripId !== tripId)
+      );
+      
+      return { success: true };
+    } else {
+      console.log('[markTripQuestionsAsRead] Erreur - status:', response.status);
+      return { success: false };
+    }
+  } catch (error) {
+    console.error('[markTripQuestionsAsRead] Exception:', error);
+    return { success: false };
+  }
+};
+
+const getUnansweredQuestionsCount = (userId: string): number => {
+  console.log('[getUnansweredQuestionsCount] Début - userId:', userId);
+  console.log('[getUnansweredQuestionsCount] unansweredQuestions:', messagesStore.unansweredQuestions);
+  
+  const count = messagesStore.unansweredQuestions.length;
+  
+  console.log('[getUnansweredQuestionsCount] Total:', count);
+  return count;
+};
+
+const getQuestionTrips = (): Array<{tripId: string, tripTitle: string, lastUpdate: string}> => {
+  const questionTrips = new Map<string, {tripId: string, tripTitle: string, lastUpdate: string}>();
+  
+  messagesStore.unansweredQuestions.forEach(question => {
+    if (!questionTrips.has(question.tripId)) {
+      questionTrips.set(question.tripId, {
+        tripId: question.tripId,
+        tripTitle: '',
+        lastUpdate: question.createdAt
+      });
+    }
+  });
+  
+  return Array.from(questionTrips.values());
+};
+
+const getTripsWithQuestions = async (userId: string) => {
+  try {
+    const response = await fetch(`${backendUrl}/messages/trips-with-questions`, {
+      headers: {
+        'x-user-id': userId,
+      },
+    });
+    
+    if (response.status === 200) {
+      const trips = await response.json();
+      setMessagesStore("questionTrips", trips);
+      return { success: true, data: trips };
+    } else {
+      return { success: false, error: "Erreur lors de la récupération des trips" };
+    }
+  } catch (error) {
+    console.error('Erreur getTripsWithQuestions:', error);
+    return { success: false, error: "Impossible de communiquer avec le backend" };
+  }
+};
+
 const clearAllMessages = () => {
   setMessagesStore("messagesByTrip", {});
   setMessagesStore("metaByTrip", {});
@@ -208,8 +321,13 @@ export {
   getLastMessagesByTrips,
   getTotalUnreadCount,
   getUnreadCountForTrip,
+  getTripsWithQuestions,
   addMessage,
   updateMessage,
+  markTripQuestionsAsRead,
+  getQuestionTrips,
+  getUnansweredQuestions,
+  getUnansweredQuestionsCount,
   setMessageAsRead,
   clearMessages,
   clearAllMessages,

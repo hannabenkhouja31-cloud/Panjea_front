@@ -1,11 +1,5 @@
 import { For } from "solid-js";
-
-interface ProfileModalsProps {
-    editTravelTypes: string[];
-    allTravelTypes: Array<{ id: number; slug: string; label: string }>;
-    onToggleTravelType: (slug: string) => void;
-    onConfirmSave: () => void;
-}
+import type { ProfileModalsProps } from "./types";
 
 export const ProfileModals = (props: ProfileModalsProps) => {
     return (
@@ -63,8 +57,30 @@ export const ProfileModals = (props: ProfileModalsProps) => {
                     </div>
                 </div>
             </dialog>
+
+            <dialog id="confirm_delete_modal" class="modal">
+                <div class="modal-box">
+                    <h3 class="font-bold text-lg text-red-600">⚠️ Supprimer votre compte</h3>
+                    <p class="py-4">
+                        Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.
+                        Vos voyages et messages resteront visibles mais votre profil sera anonymisé.
+                    </p>
+                    <div class="modal-action">
+                        <form method="dialog" class="flex gap-2">
+                            <button class="btn">Annuler</button>
+                            <button 
+                                class="btn btn-error"
+                                onClick={props.onConfirmDelete}
+                            >
+                                Supprimer définitivement
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <form method="dialog" class="modal-backdrop">
+                    <button>close</button>
+                </form>
+            </dialog>
         </>
     );
 };
-
-export default ProfileModals;

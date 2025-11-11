@@ -1,4 +1,4 @@
-import { A, useNavigate } from "@solidjs/router";
+import { A, useNavigate, useSearchParams } from "@solidjs/router";
 import { For, Show, onMount, onCleanup, createSignal, createEffect } from "solid-js";
 import { Plus, MapPin, Calendar, Users, Wallet } from "lucide-solid";
 import { trip, getAllTrips } from "../../stores/tripStore";
@@ -7,13 +7,21 @@ import { user } from "../../stores/userStore";
 
 export const VoyagePage = () => {
     const navigate = useNavigate();
+    
+    const [searchParams, setSearchParams] = useSearchParams();
     const [isLoadingMore, setIsLoadingMore] = createSignal(false);
     const [isInitialLoading, setIsInitialLoading] = createSignal(true);
     const [sentinelRef, setSentinelRef] = createSignal<HTMLDivElement>();
 
     onMount(async () => {
-        if (trip.trips.length === 0 || !trip.tripsMeta) {
+        const shouldRefresh = searchParams.refresh === 'true';
+        
+        if (trip.trips.length === 0 || !trip.tripsMeta || shouldRefresh) {
             await getAllTrips(1, false);
+            
+            if (shouldRefresh) {
+                setSearchParams({ refresh: undefined });
+            }
         }
         setIsInitialLoading(false);
     });

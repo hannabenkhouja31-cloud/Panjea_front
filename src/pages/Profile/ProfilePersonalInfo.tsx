@@ -1,31 +1,9 @@
 import { Show } from "solid-js";
 import { UserCircle, MapPin } from "lucide-solid";
-import type { UserProfile } from "../../stores/userStore";
-
-interface ProfilePersonalInfoProps {
-    profile: UserProfile | null;
-    isEditing: boolean;
-    editDescription: string;
-    editCity: string;
-    editCountry: string;
-    onDescriptionChange: (value: string) => void;
-    onCityChange: (value: string) => void;
-    onCountryChange: (value: string) => void;
-}
+import type { ProfilePersonalInfoProps } from "./types";
+import { capitalizeFirst, getLocation } from "./utils";
 
 export const ProfilePersonalInfo = (props: ProfilePersonalInfoProps) => {
-    const capitalizeFirst = (str: string) => {
-        if (!str) return str;
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    };
-
-    const getLocation = () => {
-        const parts = [];
-        if (props.profile?.city) parts.push(props.profile.city);
-        if (props.profile?.country) parts.push(props.profile.country);
-        return parts.length > 0 ? parts.join(", ") : "Non renseigné";
-    };
-
     return (
         <div class="text-black border-l-3 border-[#146865] p-8">
             <div class="flex items-center gap-3 mb-6">
@@ -84,7 +62,7 @@ export const ProfilePersonalInfo = (props: ProfilePersonalInfoProps) => {
                     </Show>
                     <div class="flex items-center gap-3 pt-2">
                         <MapPin size={20} color="black" stroke-width={2.5}/>
-                        <span class="text-black font-medium text-lg">{getLocation()}</span>
+                        <span class="text-black font-medium text-lg">{getLocation(props.profile?.city, props.profile?.country)}</span>
                     </div>
                 </div>
             </Show>

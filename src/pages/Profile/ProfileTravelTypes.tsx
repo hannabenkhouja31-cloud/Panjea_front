@@ -1,18 +1,8 @@
 import { Show, For } from "solid-js";
 import { Compass } from "lucide-solid";
-import type { UserProfile } from "../../stores/userStore";
-
-interface ProfileTravelTypesProps {
-    profile: UserProfile | null;
-    isEditing: boolean;
-    editTravelTypes: string[];
-    allTravelTypes: Array<{ id: number; slug: string; label: string }>;
-    travelTypes: Array<{ id: number; slug: string; label: string }>;
-    onToggleTravelType: (slug: string) => void;
-}
+import type { ProfileTravelTypesProps } from "./types";
 
 export const ProfileTravelTypes = (props: ProfileTravelTypesProps) => {
-
     return (
         <div class="text-black border-l-3 border-[#DC9E53] p-8">
             <div class="flex items-center gap-3 mb-6">

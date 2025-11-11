@@ -1,10 +1,10 @@
 import { createSignal, For } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { LANGUAGE_LABELS, SUPPORTED_LANGUAGES, type BudgetLevel, type LanguageCode, type TravelType } from "../models";
-import { backend, createUserInDatabase, getNeonApp } from "../stores/configStore";
-import { getUserFromDatabase, getUserTripsFromDatabase, login, setCanRegister, setRegisterBudgetLevel, setRegisterLanguages, setRegisterPseudo, setRegisterTravelTypes, setRegisterUserId, setUserProfile, setUserTrips, user } from "../stores/userStore";
-import { startLoading, stopLoading } from "../stores/loaderStore";
-import { getAllTrips } from "../stores/tripStore";
+import { LANGUAGE_LABELS, SUPPORTED_LANGUAGES, type BudgetLevel, type LanguageCode, type TravelType } from "../../models";
+import { backend, createUserInDatabase, getNeonApp } from "../../stores/configStore";
+import { getUserFromDatabase, getUserTripsFromDatabase, login, setCanRegister, setRegisterBudgetLevel, setRegisterLanguages, setRegisterPseudo, setRegisterTravelTypes, setRegisterUserId, setUserProfile, setUserTrips, user } from "../../stores/userStore";
+import { startLoading, stopLoading } from "../../stores/loaderStore";
+import { getAllTrips } from "../../stores/tripStore";
 
 const LANGUAGE_TO_FLAG: Record<LanguageCode, string> = {
     fr: 'fr',

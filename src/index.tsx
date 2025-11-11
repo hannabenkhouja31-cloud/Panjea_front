@@ -4,30 +4,34 @@ import { createEffect, lazy, onCleanup, onMount, Show, Suspense } from "solid-js
 
 import './index.css'
 
-import {Header} from "./components/Header.tsx";
-import {Footer} from "./components/Footer.tsx";
+import {Header} from "./layout/Header.tsx";
+import {Footer} from "./layout/Footer.tsx";
 import {HomePage} from "./pages/HomePage.tsx";
 import {setIsMenuWhite} from "./stores/styleStore.ts";
 import { backend, getNeonApp, getTravelTypes, pingBackend, startNeonAuth } from './stores/configStore.ts';
-import { getUserFromDatabase, getUserMemberTripsFromDatabase, setUserTrips, user, setUserProfile, login } from './stores/userStore.ts';
+import { getUserFromDatabase, getUserMemberTripsFromDatabase, setUserTrips, user, setUserProfile, login, logout } from './stores/userStore.ts';
 import { loader, startLoading, stopLoading } from './stores/loaderStore.ts';
 import { getAllTrips } from './stores/tripStore.ts';
 import { ConversationsPage } from './pages/Conversations/ConversationsPage.tsx';
 import { disconnectSocket, initSocket, joinMultipleTripRooms, identifyUser, resetSocket } from './stores/websocketStore.ts';
-import { getMessagesByTripId } from './stores/messagesStore.ts';
+import { getMessagesByTripId, getUnansweredQuestions } from './stores/messagesStore.ts';
 import type { Trip } from './models/trip.model.ts';
+import AdminPage from './pages/Admin/AdminPage.tsx';
+import { checkUserBanStatus } from './utils/banUtils.ts';
+import BannedPage from './pages/SignPage/BannedPage.tsx';
+
 
 const VoyagePage = lazy(() => import("./pages/Voyage/VoyagePage.tsx"));
 const CreateTripPage = lazy(() => import("./pages/Voyage/CreateTrip/CreateTripPage.tsx"));
-const VoyageDetailPage = lazy(() => import("./pages/Voyage/VoyageDetailPage.tsx"));
+const VoyageDetailPage = lazy(() => import("./pages/Voyage/VoyageDetail/index.tsx"));
 const ProfilePage = lazy(() => import("./pages/Profile/ProfilePage.tsx"));
-const SignUpPage = lazy(() => import('./pages/SignUpPage.tsx'));
-const SignInPage = lazy(() => import('./pages/SignInPage.tsx'));
-const ContinueSignUp = lazy(() => import('./pages/ContinueSignUp.tsx'));
-const ProfilePictureStep = lazy(() => import('./pages/ProfilePictureStep.tsx'));
-const UserProfilePage = lazy(() => import("./pages/Profile/UserProfilePage.tsx"));
-const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage.tsx'));
-const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage.tsx'));
+const SignUpPage = lazy(() => import('./pages/SignPage/SignUpPage.tsx'));
+const SignInPage = lazy(() => import('./pages/SignPage/SignInPage.tsx'));
+const ContinueSignUp = lazy(() => import('./pages/SignPage/ContinueSignUp.tsx'));
+const ProfilePictureStep = lazy(() => import('./pages/SignPage/ProfilePictureStep.tsx'));
+const UserProfilePage = lazy(() => import("./pages/Profile/UserProfile/index.tsx"));
+const ForgotPasswordPage = lazy(() => import('./pages/SignPage/ForgotPasswordPage.tsx'));
+const ResetPasswordPage = lazy(() => import('./pages/SignPage/ResetPasswordPage.tsx'));
 
 
 const Layout = (props:any) => {
@@ -69,6 +73,14 @@ const Layout = (props:any) => {
                         setUserProfile(null);
                         setUserTrips([]);
                     }
+
+                    const banStatus = await checkUserBanStatus(neonUser.id);
+
+                    if (banStatus.isBanned) {
+                        navigate("/banni", { replace: true });
+                        stopLoading();
+                        return;
+                    }
                     
                     await initSocket();
                     
@@ -87,7 +99,8 @@ const Layout = (props:any) => {
                             tripsCount: dbUser.data.tripsCount,
                             description: dbUser.data.description,
                             profilePictureUrl: dbUser.data.profilePictureUrl,
-                            isVerified: dbUser.data.isVerified
+                            isVerified: dbUser.data.isVerified,
+                            isAdmin: dbUser.data.isAdmin
                         });
 
                         identifyUser(dbUser.data.id);
@@ -108,6 +121,9 @@ const Layout = (props:any) => {
                                 
                                 joinMultipleTripRooms(memberTrips.data, dbUser.data.id);
                             }
+
+                            await getUnansweredQuestions(dbUser.data.id);
+
                         }
 
                         login();
@@ -117,7 +133,7 @@ const Layout = (props:any) => {
                         if (location.pathname === "/inscription" || 
                             location.pathname === "/connexion" || 
                             location.pathname === "/inscription/continuer") {
-                            navigate("/voyage", { replace: true });
+                            navigate("/", { replace: true });
                         }
                         
                     } else {
@@ -176,6 +192,7 @@ render(
     () => (
         <Router root={Layout}>
             <Route path="/" component={HomePage} />
+            <Route path="/admin" component={AdminPage} />
             <Route path="/inscription" component={SignUpPage}/>
             <Route path="/inscription/continuer" component={ContinueSignUp}/>
             <Route path="/inscription/photo" component={ProfilePictureStep}/>
@@ -188,6 +205,7 @@ render(
             <Route path="/voyage/creer" component={CreateTripPage}/>
             <Route path="/voyage/:id" component={VoyageDetailPage}/>
             <Route path="/conversations" component={ConversationsPage}/>
+            <Route path="/banni" component={BannedPage}/>
         </Router>
     ),
     // @ts-ignore

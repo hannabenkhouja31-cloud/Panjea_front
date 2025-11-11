@@ -2,46 +2,13 @@ import { A } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import { MapPin, Calendar, Users, Wallet } from "lucide-solid";
 import { backend } from "../../stores/configStore";
-import type { Trip } from "../../models";
-
-interface ProfileTripsProps {
-    trips: Trip[];
-}
+import type { ProfileTripsProps } from "./types";
+import { formatDateRange, formatBudget, getFirstTripImage } from "./utils";
 
 export const ProfileTrips = (props: ProfileTripsProps) => {
-    const formatDateRange = (monthYear: any) => {
-        if (typeof monthYear === 'string') {
-            const match = monthYear.match(/\[(\d{4}-\d{2}-\d{2}),(\d{4}-\d{2}-\d{2})\)/);
-            if (match) {
-                const startDate = new Date(match[1]);
-                const endDate = new Date(match[2]);
-                const startMonth = startDate.toLocaleDateString('fr-FR', { month: 'short' });
-                const endMonth = endDate.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
-                
-                if (startDate.getMonth() === endDate.getMonth() && startDate.getFullYear() === endDate.getFullYear()) {
-                    return endMonth;
-                }
-                return `${startMonth} - ${endMonth}`;
-            }
-        }
-        return "Date à définir";
-    };
-
-    const formatBudget = (budget?: number) => {
-        if (!budget) return "Budget libre";
-        return `${budget.toLocaleString('fr-FR')}€`;
-    };
-
     const getTravelTypeLabel = (slug: string) => {
         const travelType = backend.travelTypes?.find((tt: any) => tt.slug === slug);
         return travelType?.label || slug;
-    };
-
-    const getFirstTripImage = (tripItem: any) => {
-        if (tripItem.media && tripItem.media.length > 0) {
-            return tripItem.media[0].url;
-        }
-        return "/images/citiesBeautiful.png";
     };
 
     return (

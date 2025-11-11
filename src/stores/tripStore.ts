@@ -221,6 +221,10 @@ const deleteTrip = async (id: string) => {
       }
 
       setTrip("trips", trip.trips.filter(t => t.id !== id));
+      setTrip("organizerTrips", trip.organizerTrips.filter(t => t.id !== id));
+
+      const { setUserTrips, user } = await import('./userStore');
+      setUserTrips(user.trips.filter(t => t.id !== id));
 
       stopLoading();
       return { success: true };

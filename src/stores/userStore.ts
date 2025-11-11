@@ -4,21 +4,31 @@ import { startLoading, stopLoading } from "./loaderStore";
 import { disconnectSocket } from "./websocketStore";
 import { clearAllMessages } from "./messagesStore";
 import { clearAllTrips } from "./tripStore";
+import { getNeonApp } from "./configStore";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export interface UserProfile {
   id: string;
   username: string;
-  languages: LanguageCode[];
-  budgetLevel: BudgetLevel;
-  travelTypes: TravelType[];
+  email?: string;
   city?: string;
   country?: string;
-  tripsCount: number;
+  languages: any[];
+  travelTypes: string[];
   description?: string;
+  budgetLevel?: number;
   profilePictureUrl?: string;
+  tripsCount?:number;
   isVerified: boolean;
+  isDeleted?: boolean;
+  isAdmin?: boolean;
+  reportedCount?: number;
+  isBanned?: boolean;
+  bannedAt?: string;
+  bannedUntil?: string;
+  bannedReason?: string;
+  createdAt?: string;
 }
 
 interface RegisterInfos {
@@ -296,6 +306,36 @@ const getUserProfileById = async (id: string) => {
     }
 }
 
+const deleteAccount = async () => {
+  if (!user.profile?.id) {
+    return { success: false, error: "Aucun profil utilisateur" };
+  }
+
+  startLoading();
+
+  try {
+    const response = await fetch(`${backendUrl}/users/${user.profile.id}`, {
+      method: "DELETE",
+    });
+
+    if (response.status === 204) {
+      const neonApp = getNeonApp();
+      await neonApp?.signOut();
+      
+      cleanupUserData();
+      stopLoading();
+      return { success: true };
+    } else {
+      stopLoading();
+      return { success: false, error: "Erreur lors de la suppression du compte" };
+    }
+  } catch (error) {
+    console.error("Impossible de supprimer le compte : ", error);
+    stopLoading();
+    return { success: false, error: "Impossible de communiquer avec le backend" };
+  }
+};
+
 const cleanupUserData = () => {
     setUserProfile(null);
     setUserTrips([]);
@@ -325,5 +365,6 @@ export {
     updateProfilePicture,
     deleteProfilePicture,
     getUserProfileById,
+    deleteAccount,
     cleanupUserData
 }

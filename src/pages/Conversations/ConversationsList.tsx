@@ -4,6 +4,7 @@ import { getMessagesByTripId, getUnreadCountForTrip, messagesStore, setMessageAs
 import type { Trip } from "../../models";
 import { MessageSquare } from "lucide-solid";
 import { joinMultipleTripRooms } from "../../stores/websocketStore";
+import { formatTime, getFirstTripImage } from "./utils";
 
 interface ConversationsListProps {
     selectedTrip: Trip | null;
@@ -11,21 +12,8 @@ interface ConversationsListProps {
 }
 
 export const ConversationsList = (props: ConversationsListProps) => {
-
-    const getFirstTripImage = (tripItem: Trip) => {
-        if (tripItem.media && tripItem.media.length > 0) {
-            return tripItem.media[0].url;
-        }
-        return "/images/citiesBeautiful.png";
-    };
-
     const isUserTrip = (organizerId: string) => {
         return user.profile?.id === organizerId;
-    };
-
-    const formatTime = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
     };
 
     const getLastMessage = (tripId: string) => {
@@ -139,7 +127,44 @@ export const ConversationsList = (props: ConversationsListProps) => {
             });
         }
     });
-    
+
+    const formattedLastMessage = (tripItem: Trip) => {
+        const msg = getLastMessage(tripItem.id);
+        if (!msg) return { text: "Aucun message", isNotification: false };
+
+        if (msg.questionData) {
+            if (msg.questionData.type === 'question') {
+                if (isUserTrip(tripItem.organizerId)) {
+                    return { 
+                        text: `Question de ${msg.sender.username}`, 
+                        isNotification: true 
+                    };
+                } else {
+                    return { 
+                        text: `Votre question`,
+                        isNotification: true
+                    };
+                }
+            } else if (msg.questionData.type === 'answer') {
+                if (isUserTrip(tripItem.organizerId)) {
+                    return { 
+                        text: `Vous avez répondu`, 
+                        isNotification: true 
+                    };
+                } else {
+                    return { 
+                        text: `Réponse de ${msg.sender.username}`,
+                        isNotification: true
+                    };
+                }
+            }
+        }
+        
+        return { 
+            text: `${msg.sender.username}: ${msg.content}`, 
+            isNotification: false 
+        };
+    };
 
     return (
         <div class="border-r-2 border-black w-1/4 flex flex-col h-full">
@@ -150,46 +175,8 @@ export const ConversationsList = (props: ConversationsListProps) => {
                 <For each={sortedTrips()}>
                     {(tripItem) => {
                         const lastMessage = () => getLastMessage(tripItem.id);
-
                         const unreadCount = () => getNumberOfUnreadMessage(tripItem.id);
-
-                        const formattedLastMessage = createMemo(() => {
-                            const msg = lastMessage();
-                            if (!msg) return { text: "Aucun message", isNotification: false };
-
-                            if (msg.questionData) {
-                                if (msg.questionData.type === 'question') {
-                                    if (isUserTrip(tripItem.organizerId)) {
-                                        return { 
-                                            text: `Question de ${msg.sender.username}`, 
-                                            isNotification: true 
-                                        };
-                                    } else {
-                                        return { 
-                                            text: `Votre question`,
-                                            isNotification: true
-                                        };
-                                    }
-                                } else if (msg.questionData.type === 'answer') {
-                                    if (isUserTrip(tripItem.organizerId)) {
-                                        return { 
-                                            text: `Vous avez répondu`, 
-                                            isNotification: true 
-                                        };
-                                    } else {
-                                        return { 
-                                            text: `Réponse de ${msg.sender.username}`,
-                                            isNotification: true
-                                        };
-                                    }
-                                }
-                            }
-                            
-                            return { 
-                                text: `${msg.sender.username}: ${msg.content}`, 
-                                isNotification: false 
-                            };
-                        });
+                        const lastMessageFormatted = () => formattedLastMessage(tripItem);
 
                         return (
                             <div
@@ -237,7 +224,7 @@ export const ConversationsList = (props: ConversationsListProps) => {
                                         <div class={`relative top-1 pr-8 text-sm truncate flex items-center gap-1.5 ${
                                             props.selectedTrip?.id === tripItem.id ? "text-white/80" : "text-black/60"
                                         }`}>
-                                            <Show when={formattedLastMessage().isNotification}>
+                                            <Show when={lastMessageFormatted().isNotification}>
                                                 <MessageSquare size={14} class={
                                                     props.selectedTrip?.id === tripItem.id 
                                                         ? "text-white/80" 
@@ -245,7 +232,7 @@ export const ConversationsList = (props: ConversationsListProps) => {
                                                 } />
                                             </Show>
                                             <span class="truncate">
-                                                {formattedLastMessage().text}
+                                                {lastMessageFormatted().text}
                                             </span>
                                             <Show when={unreadCount()}>
                                                 {(count) => (
@@ -257,7 +244,6 @@ export const ConversationsList = (props: ConversationsListProps) => {
                                                 )}
                                             </Show>
                                         </div>
-                                        
                                     </div>
                                 </div>
                             </div>

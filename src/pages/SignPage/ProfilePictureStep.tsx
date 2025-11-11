@@ -1,7 +1,7 @@
 import { createSignal } from "solid-js";
 import { Camera, Plane, MapPin, Compass, Globe, Mountain } from "lucide-solid";
-import { createUploadThing } from "../utils/uploadthing";
-import { updateProfilePicture, user } from "../stores/userStore";
+import { createUploadThing } from "../../utils/uploadthing";
+import { updateProfilePicture, user } from "../../stores/userStore";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 

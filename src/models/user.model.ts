@@ -19,6 +19,13 @@ export interface User {
   budgetLevel?: number;
   profilePictureUrl?: string;
   isVerified: boolean;
+  isDeleted?: boolean;
+  isAdmin?: boolean;
+  reportedCount?: number;
+  isBanned?: boolean;
+  bannedUntil?: string;
+  bannedAt?: Date;
+  bannedReason?: string;
   createdAt: Date;
 }
 

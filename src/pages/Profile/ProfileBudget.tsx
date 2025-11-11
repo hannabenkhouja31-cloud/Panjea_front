@@ -1,26 +1,7 @@
 import { Show } from "solid-js";
 import { Wallet } from "lucide-solid";
-import type { BudgetLevel } from "../../models";
-import type { UserProfile } from "../../stores/userStore";
-
-interface ProfileBudgetProps {
-    profile: UserProfile | null;
-    isEditing: boolean;
-    editBudgetLevel: BudgetLevel;
-    onBudgetChange: (value: BudgetLevel) => void;
-}
-
-const BUDGET_SYMBOLS = {
-    1: "€",
-    2: "€€",
-    3: "€€€"
-};
-
-const BUDGET_LABELS = {
-    1: "0-1250€",
-    2: "1250-2500€",
-    3: ">2500€"
-};
+import type { ProfileBudgetProps } from "./types";
+import { BUDGET_SYMBOLS, BUDGET_LABELS } from "./utils";
 
 export const ProfileBudget = (props: ProfileBudgetProps) => {
     const getRangeColor = () => {
@@ -49,7 +30,7 @@ export const ProfileBudget = (props: ProfileBudgetProps) => {
                             min="1" 
                             max="3" 
                             value={props.editBudgetLevel} 
-                            onInput={(e) => props.onBudgetChange(Number(e.target.value) as BudgetLevel)}
+                            onInput={(e) => props.onBudgetChange(Number(e.target.value) as any)}
                             class="budget-range w-full" 
                             step="1"
                         />

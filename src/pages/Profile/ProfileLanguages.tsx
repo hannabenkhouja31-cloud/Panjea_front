@@ -1,37 +1,8 @@
 import { Show, For } from "solid-js";
 import { Languages } from "lucide-solid";
-import type { LanguageCode } from "../../models";
-import { LANGUAGE_LABELS, SUPPORTED_LANGUAGES } from "../../models";
-
-interface ProfileLanguagesProps {
-    languages: LanguageCode[];
-    isEditing: boolean;
-    editLanguages: LanguageCode[];
-    selectedLanguageIndex: number;
-    onSelectLanguageIndex: (index: number) => void;
-    onAddLanguage: (e: MouseEvent) => void;
-    onRemoveLanguage: (e: MouseEvent, index: number) => void;
-    onUpdateLanguage: (index: number, lang: LanguageCode) => void;
-    getAvailableLanguages: (index: number) => readonly string[];
-}
-
-const LANGUAGE_TO_FLAG: Record<LanguageCode, string> = {
-    fr: 'fr',
-    en: 'gb',
-    es: 'es',
-    de: 'de',
-    it: 'it',
-    pt: 'pt',
-    nl: 'nl',
-    pl: 'pl',
-    ru: 'ru',
-    ja: 'jp',
-    zh: 'cn',
-    ar: 'sa',
-    hi: 'in',
-    tr: 'tr',
-    ko: 'kr'
-};
+import { LANGUAGE_LABELS, SUPPORTED_LANGUAGES, type LanguageCode } from "../../models";
+import type { ProfileLanguagesProps } from "./types";
+import { LANGUAGE_TO_FLAG } from "./utils";
 
 export const ProfileLanguages = (props: ProfileLanguagesProps) => {
     return (

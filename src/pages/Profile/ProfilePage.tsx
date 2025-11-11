@@ -1,7 +1,7 @@
 import {createSignal, onMount, Show, createEffect} from "solid-js";
 import {useNavigate, useSearchParams} from "@solidjs/router";
 import { SUPPORTED_LANGUAGES, type BudgetLevel, type LanguageCode } from "../../models";
-import { updateProfile, user } from "../../stores/userStore";
+import { deleteAccount, updateProfile, user } from "../../stores/userStore";
 import { backend } from "../../stores/configStore";
 import { ProfileHeader } from "./ProfileHeader";
 import { ProfilePersonalInfo } from "./ProfilePersonalInfo";
@@ -9,11 +9,13 @@ import { ProfileTravelTypes } from "./ProfileTravelTypes";
 import { ProfileBudget } from "./ProfileBudget";
 import { ProfileLanguages } from "./ProfileLanguages";
 import { ProfileTrips } from "./ProfileTrips";
-import ProfileModals from "./ProfileModals";
+import { ProfileModals } from "./ProfileModals";
 
 export const ProfilePage = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
+
+    
 
     const [verificationMessage, setVerificationMessage] = createSignal<{text: string, type: 'success' | 'error'} | null>(null);
 
@@ -191,6 +193,21 @@ export const ProfilePage = () => {
         setHasChanges(false);
     };
 
+    const handleDeleteAccount = () => {
+        const modal = document.getElementById('confirm_delete_modal') as HTMLDialogElement;
+        modal?.showModal();
+    };
+
+    const confirmDelete = async () => {
+        const result = await deleteAccount();
+        
+        if (result.success) {
+            navigate("/", { replace: true });
+        } else {
+            console.error("Erreur lors de la suppression:", result.error);
+        }
+    };
+
     return (
         <div class="flex-1 bg-color-light">
             <div class="container-app py-12">
@@ -298,6 +315,15 @@ export const ProfilePage = () => {
                                             Sauvegarder les modifications
                                         </button>
                                     </div>
+
+                                    <div class="flex justify-center items-center pt-8 border-t border-gray-200 mt-8">
+                                        <button
+                                            onClick={handleDeleteAccount}
+                                            class="text-center text-sm text-black/20 hover:text-black/40"
+                                        >
+                                            Supprimer mon compte
+                                        </button>
+                                    </div>
                                 </Show>
                             </div>
                         </Show>
@@ -314,6 +340,7 @@ export const ProfilePage = () => {
                 allTravelTypes={allTravelTypes()}
                 onToggleTravelType={toggleTravelType}
                 onConfirmSave={confirmSave}
+                onConfirmDelete={confirmDelete}
             />
         </div>
     );

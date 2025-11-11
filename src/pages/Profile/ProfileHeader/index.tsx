@@ -1,24 +1,10 @@
 import { Show } from "solid-js";
 import { MapPin } from "lucide-solid";
-import type { UserProfile } from "../../stores/userStore";
 import { ProfileAvatar } from "./ProfileAvatar";
-
-interface ProfileHeaderProps {
-    profile: UserProfile | null;
-    activeTab: string;
-    isEditing: boolean;
-    onEdit: () => void;
-    onCancel: () => void;
-}
+import type { ProfileHeaderProps } from "../types";
+import { getLocation } from "../utils";
 
 export const ProfileHeader = (props: ProfileHeaderProps) => {
-    const getLocation = () => {
-        const parts = [];
-        if (props.profile?.city) parts.push(props.profile.city);
-        if (props.profile?.country) parts.push(props.profile.country);
-        return parts.length > 0 ? parts.join(", ") : "Non renseigné";
-    };
-
     return (
         <div class="bg-white rounded-2xl  p-8 mb-6">
             <div class="flex items-center justify-between">
@@ -35,7 +21,7 @@ export const ProfileHeader = (props: ProfileHeaderProps) => {
                         </div>
                         <div class="flex items-center gap-2 text-gray-600 mb-3">
                             <MapPin size={18} color="#DC9E53"/>
-                            <span>{getLocation()}</span>
+                            <span>{getLocation(props.profile?.city, props.profile?.country)}</span>
                         </div>
                         <Show when={props.profile?.description}>
                             <p class="text-gray-700">{props.profile?.description}</p>
