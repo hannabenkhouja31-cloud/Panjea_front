@@ -22,7 +22,7 @@ const pingBackend = async () => {
 
     try {
         const response = await fetch(backendUrl);
-        if(response.status === 204) {
+        if(response.status === 304) {
             setBackend("isConnected", true);
         } else {
             setBackend("isConnected", false);
