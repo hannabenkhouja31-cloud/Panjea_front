@@ -64,7 +64,7 @@ export const ProfilePage = () => {
     const [editCity, setEditCity] = createSignal("");
     const [editCountry, setEditCountry] = createSignal("");
     const [selectedLanguageIndex, setSelectedLanguageIndex] = createSignal(0);
-    const [editBudgetLevel, setEditBudgetLevel] = createSignal<BudgetLevel>(1);
+    const [editBudgetLevel, setEditBudgetLevel] = createSignal<BudgetLevel | number>(1);
     const [editTravelTypes, setEditTravelTypes] = createSignal<string[]>([]);
 
     createEffect(() => {
@@ -72,7 +72,7 @@ export const ProfilePage = () => {
             setEditLanguages([...(user.profile?.languages || [])]);
             setEditBudgetLevel(user.profile?.budgetLevel || 1);
             setEditTravelTypes(
-                (user.profile?.travelTypes || []).map(type => type.slug)
+                [...(user.profile?.travelTypes || [])]
             );
             setEditDescription(user.profile?.description || "");
             setEditCity(user.profile?.city || "");
@@ -169,7 +169,7 @@ export const ProfilePage = () => {
     const confirmSave = async () => {
         const updateData = {
             languages: editLanguages(),
-            budgetLevel: editBudgetLevel(),
+            budgetLevel: editBudgetLevel() as BudgetLevel,
             travelTypes: editTravelTypes(),
             description: editDescription(),
             city: editCity(),
@@ -277,7 +277,7 @@ export const ProfilePage = () => {
                                 <ProfileBudget 
                                     profile={user.profile}
                                     isEditing={isEditing()}
-                                    editBudgetLevel={editBudgetLevel()}
+                                    editBudgetLevel={editBudgetLevel() as BudgetLevel}
                                     onBudgetChange={setEditBudgetLevel}
                                 />
 

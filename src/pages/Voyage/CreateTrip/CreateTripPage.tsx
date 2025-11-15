@@ -49,8 +49,7 @@ export const CreateTripPage = () => {
         }
         
         if (user.profile?.travelTypes && user.profile.travelTypes.length >= 3) {
-            const travelTypeSlugs = user.profile.travelTypes.map(type => type.slug);
-            setSelectedTravelTypes(travelTypeSlugs);
+            setSelectedTravelTypes([...user.profile.travelTypes]);
         }
     });
 

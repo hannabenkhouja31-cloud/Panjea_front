@@ -320,6 +320,7 @@ const deleteAccount = async () => {
 
     if (response.status === 204) {
       const neonApp = getNeonApp();
+      // @ts-expect-error Stack Auth signOut exists but not in types
       await neonApp?.signOut();
       
       cleanupUserData();

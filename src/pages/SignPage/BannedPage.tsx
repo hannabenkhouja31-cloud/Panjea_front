@@ -60,6 +60,7 @@ export const BannedPage = () => {
 
     const handleLogout = async () => {
         const neonApp = getNeonApp();
+        // @ts-expect-error Stack Auth signOut exists but not in types
         await neonApp?.signOut();
         logout();
         navigate("/connexion", { replace: true });

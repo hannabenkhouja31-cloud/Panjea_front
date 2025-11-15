@@ -66,15 +66,15 @@ export const ProfilePage = () => {
     const [editCity, setEditCity] = createSignal("");
     const [editCountry, setEditCountry] = createSignal("");
     const [selectedLanguageIndex, setSelectedLanguageIndex] = createSignal(0);
-    const [editBudgetLevel, setEditBudgetLevel] = createSignal<BudgetLevel>(1);
+    const [editBudgetLevel, setEditBudgetLevel] = createSignal<BudgetLevel>(1 as BudgetLevel);
     const [editTravelTypes, setEditTravelTypes] = createSignal<string[]>([]);
 
     createEffect(() => {
         if (isEditing()) {
             setEditLanguages([...(user.profile?.languages || [])]);
-            setEditBudgetLevel(user.profile?.budgetLevel || 1);
+            setEditBudgetLevel((user.profile?.budgetLevel || 1) as BudgetLevel);
             setEditTravelTypes(
-                (user.profile?.travelTypes || []).map(type => type.slug)
+                [...(user.profile?.travelTypes || [])]
             );
             setEditDescription(user.profile?.description || "");
             setEditCity(user.profile?.city || "");

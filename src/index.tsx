@@ -9,7 +9,7 @@ import {Footer} from "./layout/Footer.tsx";
 import {HomePage} from "./pages/HomePage.tsx";
 import {setIsMenuWhite} from "./stores/styleStore.ts";
 import { backend, getNeonApp, getTravelTypes, pingBackend, startNeonAuth } from './stores/configStore.ts';
-import { getUserFromDatabase, getUserMemberTripsFromDatabase, setUserTrips, user, setUserProfile, login, logout } from './stores/userStore.ts';
+import { getUserFromDatabase, getUserMemberTripsFromDatabase, setUserTrips, user, setUserProfile, login } from './stores/userStore.ts';
 import { loader, startLoading, stopLoading } from './stores/loaderStore.ts';
 import { getAllTrips } from './stores/tripStore.ts';
 import { ConversationsPage } from './pages/Conversations/ConversationsPage.tsx';

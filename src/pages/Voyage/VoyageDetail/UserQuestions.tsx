@@ -1,6 +1,6 @@
 import { For, Show, type Accessor } from "solid-js";
 import { MessageCircle, MessageSquare } from "lucide-solid";
-import type { Message } from "../../models";
+import type { Message } from "../../../models";
 
 interface UserQuestionsProps {
     questions: Accessor<Message[]>;

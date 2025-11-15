@@ -8,7 +8,8 @@
     "build:staging": "tsc -b && vite build --mode staging",
     "build:prod": "tsc -b && vite build --mode production",
     "preview:staging": "vite preview --mode staging",
-    "preview:prod": "vite preview --mode production"
+    "preview:prod": "vite preview --mode production",
+    "start": "serve -s dist -l 3000" 
   },
   "dependencies": {
     "@solidjs/router": "^0.15.3",
@@ -19,6 +20,7 @@
     "air-datepicker": "^3.6.0",
     "flag-icons": "^7.5.0",
     "lucide-solid": "^0.544.0",
+    "serve": "^14.2.5",
     "socket.io-client": "^4.8.1",
     "solid-js": "^1.9.8",
     "tailwindcss": "^4.1.13",
