@@ -20,6 +20,8 @@ const [backend, setBackend] = createStore<BackendStore>({
 
 const pingBackend = async () => {
 
+    console.log('Backend URL:', backendUrl);
+
     try {
         const response = await fetch(backendUrl);
         if(response.status === 200) {
