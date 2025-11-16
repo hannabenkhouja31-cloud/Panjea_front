@@ -169,59 +169,54 @@ export const CreateTripPage = () => {
     };
 
     const handleSubmit = async () => {
-    if (!validateStep1() || !validateStep2() || !validateStep4()) {
-        setError("Veuillez compléter toutes les étapes requises");
-        return;
-    }
-
-    if (!user.profile?.id) {
-        setError("Utilisateur non connecté");
-        return;
-    }
-
-    startLoading();
-
-    const finalBudget = budgetMode() === "manual" ? budgetEur() : getBudgetFromLevel(budgetLevel());
-
-    const tripData = {
-        title: title(),
-        destinationCountry: destinationCountry(),
-        startDate: startDate(),
-        endDate: endDate(),
-        minDays: minDays(),
-        maxDays: maxDays(),
-        organizerId: user.profile.id,
-        travelTypes: selectedTravelTypes(),
-        summary: summary() || undefined,
-        budgetEur: finalBudget,
-        minAge: minAge(),
-        maxAge: maxAge(),
-        temporaryMediaIds: temporaryMedia().map(m => m.id),
-    };
-
-
-    const result = await createTrip(tripData);
-
-    if (result.success) {
-        
-        const memberTrips = await getUserMemberTripsFromDatabase(user.profile.id);
-        if (memberTrips.success && memberTrips.data) {
-            setUserTrips(memberTrips.data);
-            
-            joinTripRoom(result.data.id, user.profile.id);
-            
-            await getLastMessagesByTrips([result.data.id], user.profile.id);
+        if (!validateStep1() || !validateStep2() || !validateStep4()) {
+            setError("Veuillez compléter toutes les étapes requises");
+            return;
         }
-        
-        await getAllTrips();
-        
-        stopLoading();
-        navigate("/conversations");
-    } else {
-        setError(result.error || "Erreur lors de la création du voyage");
-        stopLoading();
-    }
-};
+
+        if (!user.profile?.id) {
+            setError("Utilisateur non connecté");
+            return;
+        }
+
+        startLoading();
+
+        const finalBudget = budgetMode() === "manual" ? budgetEur() : getBudgetFromLevel(budgetLevel());
+
+        const tripData = {
+            title: title(),
+            destinationCountry: destinationCountry(),
+            startDate: startDate(),
+            endDate: endDate(),
+            minDays: minDays(),
+            maxDays: maxDays(),
+            organizerId: user.profile.id,
+            travelTypes: selectedTravelTypes(),
+            summary: summary() || undefined,
+            budgetEur: finalBudget,
+            minAge: minAge(),
+            maxAge: maxAge(),
+            temporaryMediaIds: temporaryMedia().map(m => m.id),
+        };
+
+        const result = await createTrip(tripData);
+
+        if (result.success) {
+            const memberTrips = await getUserMemberTripsFromDatabase(user.profile.id);
+            if (memberTrips.success && memberTrips.data) {
+                setUserTrips(memberTrips.data);
+                joinTripRoom(result.data.id, user.profile.id);
+                await getLastMessagesByTrips([result.data.id], user.profile.id);
+            }
+            
+            stopLoading();
+            
+            navigate("/voyage?refresh=true");
+        } else {
+            setError(result.error || "Erreur lors de la création du voyage");
+            stopLoading();
+        }
+    };
 
     return (
         <div class="container-app-narrow pb-16 pt-24 flex-1 min-h-screen bg-color-light">
