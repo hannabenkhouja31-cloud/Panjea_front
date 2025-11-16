@@ -19,7 +19,7 @@ export const ConversationsPage = () => {
                 if (!user.isConnected) {
                     navigate("/inscription", { replace: true });
                 }
-        });
+    });
         
     const hasMessages = () => {
         if (user.trips.length === 0) return true;
