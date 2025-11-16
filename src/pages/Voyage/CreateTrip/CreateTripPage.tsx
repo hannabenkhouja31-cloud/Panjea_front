@@ -1,6 +1,6 @@
 import { createEffect, createSignal, onMount } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { createTrip, getAllTrips } from "../../../stores/tripStore";
+import { createTrip } from "../../../stores/tripStore";
 import { getUserMemberTripsFromDatabase, setUserTrips, user } from "../../../stores/userStore";
 import { backend } from "../../../stores/configStore";
 import { startLoading, stopLoading } from "../../../stores/loaderStore";
