@@ -71,9 +71,9 @@ export const useTripData = () => {
         }
 
         const result = await getTripById(params.id);
-        setIsLoading(false);
 
         if (!result.success) {
+            setIsLoading(false);
             navigate("/voyage");
             return;
         }
@@ -91,6 +91,8 @@ export const useTripData = () => {
                 }
             }
         }
+        
+        setIsLoading(false);
     });
 
     return {

@@ -25,4 +25,5 @@ export interface Organizer {
     city?: string;
     country?: string;
     description?: string;
+    isDeleted?: boolean;
 }

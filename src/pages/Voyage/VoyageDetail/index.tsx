@@ -1,4 +1,4 @@
-import { Show, createSignal, onMount } from "solid-js";
+import { Show, createEffect, createSignal, onMount } from "solid-js";
 
 import { TripHeader } from "./TripHeader";
 import { TripDescription } from "./TripDescription";
@@ -20,8 +20,11 @@ import { trip } from "../../../stores/tripStore";
 import { user } from "../../../stores/userStore";
 import { backend } from "../../../stores/configStore";
 import { TripImages } from "./TripImages";
+import { useNavigate } from "@solidjs/router";
 
 export const VoyageDetailPage = () => {
+    
+    const navigate = useNavigate();
     let editTripTravelTypesModal: HTMLDialogElement | undefined;
     
     const [activeTab, setActiveTab] = createSignal<'members' | 'pending'>('members');
@@ -100,6 +103,16 @@ export const VoyageDetailPage = () => {
             if (isUserTrip) {
                 await loadUserQuestions(trip.currentTrip.id);
             }
+        }
+    });
+
+    createEffect(() => {
+        if (isLoading()) return;
+        
+        const org = organizer();
+
+        if (!org || org.isDeleted) {
+            navigate("/voyage", { replace: true });
         }
     });
 

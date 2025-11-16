@@ -62,12 +62,18 @@ export const VoyagePage = () => {
 
     const filteredTrips = createMemo(() => {
         return trip.trips.filter(tripItem => {
+            const tripAny = tripItem as any;
+            
+            if (!tripAny.organizerId || tripAny.organizerIsDeleted || tripAny.organizerIsBanned) {
+                return false;
+            }
+            
             if (selectedCountry() && tripItem.destinationCountry !== selectedCountry()) {
                 return false;
             }
 
             if (selectedTravelTypes().length > 0) {
-                const tripTypes = (tripItem as any).travelTypes || [];
+                const tripTypes = tripAny.travelTypes || [];
                 const hasMatchingType = selectedTravelTypes().some(type => tripTypes.includes(type));
                 if (!hasMatchingType) return false;
             }
