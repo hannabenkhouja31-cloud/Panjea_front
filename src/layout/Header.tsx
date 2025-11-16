@@ -31,13 +31,17 @@ export const Header = () => {
     });
 
     const handleClickOutside = (event: MouseEvent) => {
-        if (dropdownRef && !dropdownRef.contains(event.target as Node) &&
-            profileButtonRef && !profileButtonRef.contains(event.target as Node)) {
+        const target = event.target as HTMLElement;
+        
+        const clickedMenuButton = target.closest('.mobile-menu-button');
+        if (clickedMenuButton) return;
+        
+        if (dropdownRef && !dropdownRef.contains(target) &&
+            profileButtonRef && !profileButtonRef.contains(target)) {
             closeDropdown();
         }
         
-        if (mobileMenuRef && !mobileMenuRef.contains(event.target as Node) &&
-            !(event.target as HTMLElement).closest('.mobile-menu-button')) {
+        if (mobileMenuRef && !mobileMenuRef.contains(target)) {
             setIsMobileMenuOpen(false);
         }
     };
@@ -217,7 +221,9 @@ export const Header = () => {
 
                     <button
                         class={`lg:hidden mobile-menu-button p-2 ${style.isMenuWhite ? "text-white" : "text-black"}`}
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen())}
+                        onClick={() => {
+                            setTimeout(() => setIsMobileMenuOpen(!isMobileMenuOpen()), 0);
+                        }}
                     >
                         <Show when={!isMobileMenuOpen()} fallback={<X size={24} />}>
                             <Menu size={24} />
