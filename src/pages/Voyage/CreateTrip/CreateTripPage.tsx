@@ -1,4 +1,4 @@
-import { createSignal, onMount } from "solid-js";
+import { createEffect, createSignal, onMount } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { createTrip, getAllTrips } from "../../../stores/tripStore";
 import { getUserMemberTripsFromDatabase, setUserTrips, user } from "../../../stores/userStore";
@@ -41,6 +41,12 @@ export const CreateTripPage = () => {
     const [temporaryMedia, setTemporaryMedia] = createSignal<TemporaryMedia[]>([]);
     
     const [error, setError] = createSignal("");
+    
+    createEffect(() => {
+        if (!user.isConnected) {
+            navigate("/inscription", { replace: true });
+        }
+    });
 
     onMount(() => {
         

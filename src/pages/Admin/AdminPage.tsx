@@ -1,4 +1,4 @@
-import { createSignal, onMount, Show } from "solid-js";
+import { createEffect, createSignal, onMount, Show } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { user } from "../../stores/userStore";
 import { AdminStats } from "./AdminStats";
@@ -7,6 +7,12 @@ import { AdminModeration } from "./AdminModeration";
 export const AdminPage = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = createSignal<'stats' | 'moderation'>('stats');
+
+    createEffect(() => {
+            if (!user.isConnected) {
+                navigate("/inscription", { replace: true });
+            }
+    });
 
     onMount(() => {
         if (!user.profile?.id) {

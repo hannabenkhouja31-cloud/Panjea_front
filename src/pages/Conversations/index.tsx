@@ -1,16 +1,26 @@
-import { createSignal, Show } from "solid-js";
+import { createEffect, createSignal, Show } from "solid-js";
 import { ConversationsList } from "./ConversationsList";
 import { ConversationView } from "./ConversationView";
 import { QuestionTripsList } from "./QuestionTripsList";
 import type { Trip } from "../../models";
 import { user } from "../../stores/userStore";
 import { messagesStore } from "../../stores/messagesStore";
+import { useNavigate } from "@solidjs/router";
 
 export const ConversationsPage = () => {
+
+    const navigate = useNavigate();
+    
     const [selectedConversation, setSelectedConversation] = createSignal<Trip | null>(null);
     const [selectedQuestionTrip, setSelectedQuestionTrip] = createSignal<any | null>(null);
     const [activeTab, setActiveTab] = createSignal<'conversations' | 'questions'>('conversations');
 
+    createEffect(() => {
+                if (!user.isConnected) {
+                    navigate("/inscription", { replace: true });
+                }
+        });
+        
     const hasMessages = () => {
         if (user.trips.length === 0) return true;
         

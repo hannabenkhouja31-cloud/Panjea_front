@@ -68,6 +68,12 @@ export const ProfilePage = () => {
     const [editTravelTypes, setEditTravelTypes] = createSignal<string[]>([]);
 
     createEffect(() => {
+                if (!user.isConnected) {
+                    navigate("/inscription", { replace: true });
+                }
+    });
+
+    createEffect(() => {
         if (isEditing()) {
             setEditLanguages([...(user.profile?.languages || [])]);
             setEditBudgetLevel(user.profile?.budgetLevel || 1);
