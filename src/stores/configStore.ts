@@ -84,6 +84,7 @@ const createUserInDatabase = async (userData: {
     languages: string[];
     budgetLevel: number;
     travelTypes: TravelType[];
+    email: string;
 }) => {
     try {
         const response = await fetch(backendUrl + "/users", {

@@ -109,6 +109,7 @@ export const ContinueSignUp = () => {
                 languages: validLanguages,
                 budgetLevel: budgetLevel() as BudgetLevel,
                 travelTypes: selectedTravelTypeSlugs() as unknown as TravelType[],
+                email: registerInfos.email,
             });
 
             if (!dbResult.success) {
