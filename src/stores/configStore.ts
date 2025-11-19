@@ -83,6 +83,7 @@ const startNeonAuth = async () => {
 const createUserInDatabase = async (userData: {
     id: string;
     username: string;
+    age?: number;
     languages: string[];
     budgetLevel: number;
     travelTypes: TravelType[];

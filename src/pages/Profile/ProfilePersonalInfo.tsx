@@ -29,6 +29,18 @@ export const ProfilePersonalInfo = (props: ProfilePersonalInfoProps) => {
                                 {props.editDescription.length}/512
                             </div>
                         </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-black/90 mb-2">Âge <span class="text-black/50 text-xs font-normal">(optionnel)</span></label>
+                            <input
+                                type="number"
+                                min="18"
+                                max="120"
+                                value={props.editAge ?? ""}
+                                onInput={(e) => props.onAgeChange(e.target.value ? Number(e.target.value) : undefined)}
+                                placeholder="Votre âge"
+                                class="w-full px-4 py-3 border-2 border-black/30 rounded-xl bg-black/10 backdrop-blur-sm text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 transition"
+                            />
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-black/90 mb-2">Ville</label>
@@ -64,6 +76,11 @@ export const ProfilePersonalInfo = (props: ProfilePersonalInfoProps) => {
                         <MapPin size={20} color="black" stroke-width={2.5}/>
                         <span class="text-black font-medium text-lg">{getLocation(props.profile?.city, props.profile?.country)}</span>
                     </div>
+                    <Show when={props.profile?.age}>
+                        <div class="flex items-center gap-3">
+                            <span class="text-black font-medium text-lg">{props.profile?.age} ans</span>
+                        </div>
+                    </Show>
                 </div>
             </Show>
         </div>

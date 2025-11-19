@@ -13,6 +13,7 @@ export interface User {
   username: string;
   city?: string;
   country?: string;
+  age?: number;
   languages: LanguageCode[];
   tripsCount: number;
   description?: string;
@@ -34,6 +35,7 @@ export interface CreateUser {
   username: string;
   city?: string;
   country?: string;
+  age?: number;
   languages?: LanguageCode[];
   description?: string;
   budgetLevel?: number;
@@ -44,6 +46,7 @@ export interface UpdateUser {
   username?: string;
   city?: string;
   country?: string;
+  age?: number;
   languages?: LanguageCode[];
   description?: string;
   budgetLevel?: number;

@@ -203,18 +203,14 @@ const getUnansweredQuestions = async (userId: string) => {
       },
     });
     
-    console.log('[getUnansweredQuestions] Response status:', response.status);
     
     if (response.status === 200) {
       const unansweredQuestions = await response.json();
-      console.log('[getUnansweredQuestions] Réponses non lues reçues:', unansweredQuestions);
-      console.log('[getUnansweredQuestions] Nombre de réponses:', unansweredQuestions.length);
       
       setMessagesStore("unansweredQuestions", unansweredQuestions);
       
       return { success: true, data: unansweredQuestions };
     } else {
-      console.log('[getUnansweredQuestions] Erreur - status:', response.status);
       return { success: false, error: "Erreur lors de la récupération des questions" };
     }
   } catch (error) {
@@ -224,7 +220,6 @@ const getUnansweredQuestions = async (userId: string) => {
 };
 
 const markTripQuestionsAsRead = async (tripId: string, userId: string) => {
-  console.log('[markTripQuestionsAsRead] Début - tripId:', tripId, 'userId:', userId);
   
   try {
     const response = await fetch(`${backendUrl}/messages/mark-trip-questions-read/${tripId}`, {
@@ -234,10 +229,8 @@ const markTripQuestionsAsRead = async (tripId: string, userId: string) => {
       },
     });
     
-    console.log('[markTripQuestionsAsRead] Response status:', response.status);
     
     if (response.status === 200) {
-      console.log('[markTripQuestionsAsRead] Succès - questions marquées comme lues');
       
       setMessagesStore(
         "unansweredQuestions", 
@@ -246,22 +239,17 @@ const markTripQuestionsAsRead = async (tripId: string, userId: string) => {
       
       return { success: true };
     } else {
-      console.log('[markTripQuestionsAsRead] Erreur - status:', response.status);
       return { success: false };
     }
   } catch (error) {
-    console.error('[markTripQuestionsAsRead] Exception:', error);
     return { success: false };
   }
 };
 
 const getUnansweredQuestionsCount = (userId: string): number => {
-  console.log('[getUnansweredQuestionsCount] Début - userId:', userId);
-  console.log('[getUnansweredQuestionsCount] unansweredQuestions:', messagesStore.unansweredQuestions);
-  
+  console.log('', userId);
   const count = messagesStore.unansweredQuestions.length;
   
-  console.log('[getUnansweredQuestionsCount] Total:', count);
   return count;
 };
 

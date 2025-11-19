@@ -24,7 +24,7 @@ import BannedPage from './pages/SignPage/BannedPage.tsx';
 const VoyagePage = lazy(() => import("./pages/Voyage/VoyageList/index.tsx"));
 const CreateTripPage = lazy(() => import("./pages/Voyage/CreateTrip/CreateTripPage.tsx"));
 const VoyageDetailPage = lazy(() => import("./pages/Voyage/VoyageDetail/index.tsx"));
-const ProfilePage = lazy(() => import("./pages/Profile/ProfilePage.tsx"));
+const ProfilePage = lazy(() => import("./pages/Profile/index.tsx"));
 const SignUpPage = lazy(() => import('./pages/SignPage/SignUpPage.tsx'));
 const SignInPage = lazy(() => import('./pages/SignPage/SignInPage.tsx'));
 const ContinueSignUp = lazy(() => import('./pages/SignPage/ContinueSignUp.tsx'));

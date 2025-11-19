@@ -140,6 +140,23 @@ export const useTripMedia = (isEditing: () => boolean) => {
         return [...existing, ...temporaryEditMedia()];
     };
 
+    const hasMediaChanges = () => {
+        if (!trip.currentTrip) return false;
+        
+        const currentMedia = (trip.currentTrip as any).media || [];
+        const editingMedia = allEditMedia();
+        
+        if (currentMedia.length !== editingMedia.length) return true;
+        
+        if (temporaryEditMedia().length > 0) return true;
+        
+        for (let i = 0; i < currentMedia.length; i++) {
+            if (currentMedia[i].id !== editingMedia[i].id) return true;
+        }
+        
+        return false;
+    };
+
     const saveMediaChanges = async () => {
         const allMedia = allEditMedia();
 
@@ -181,6 +198,7 @@ export const useTripMedia = (isEditing: () => boolean) => {
         moveMediaLeft,
         moveMediaRight,
         saveMediaChanges,
+        hasMediaChanges,
         setUploadError
     };
 };

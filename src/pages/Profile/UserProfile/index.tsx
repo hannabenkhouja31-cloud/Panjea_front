@@ -174,6 +174,7 @@ export const UserProfilePage = () => {
                                                 onDescriptionChange={() => {}}
                                                 onCityChange={() => {}}
                                                 onCountryChange={() => {}}
+                                                onAgeChange={() => {}}
                                             />
 
                                             <ProfileTravelTypes 

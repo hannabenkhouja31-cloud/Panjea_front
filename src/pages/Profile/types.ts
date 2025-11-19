@@ -20,9 +20,11 @@ export interface ProfilePersonalInfoProps {
     editDescription: string;
     editCity: string;
     editCountry: string;
+    editAge?: number;
     onDescriptionChange: (value: string) => void;
     onCityChange: (value: string) => void;
     onCountryChange: (value: string) => void;
+    onAgeChange: (value: number | undefined) => void;
 }
 
 export interface ProfileTravelTypesProps {

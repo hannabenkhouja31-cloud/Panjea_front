@@ -3,10 +3,10 @@ import AirDatepicker from "air-datepicker";
 import localeFr from "air-datepicker/locale/fr";
 import { getTripById, trip, updateTrip } from "../../../../stores/tripStore";
 
-
 export const useTripEdit = () => {
     const [isEditing, setIsEditing] = createSignal(false);
     const [hasChanges, setHasChanges] = createSignal(false);
+    const [hasMediaChangesState, setHasMediaChangesState] = createSignal(false);
     
     const [editTitle, setEditTitle] = createSignal("");
     const [editSummary, setEditSummary] = createSignal("");
@@ -70,20 +70,36 @@ export const useTripEdit = () => {
     });
 
     createEffect(() => {
-        if (isEditing() && trip.currentTrip) {
-            const titleChanged = editTitle() !== (trip.currentTrip.title || "");
-            const summaryChanged = editSummary() !== (trip.currentTrip.summary || "");
-            const startDateChanged = editStartDate() !== ((trip.currentTrip as any).startDate || "");
-            const endDateChanged = editEndDate() !== ((trip.currentTrip as any).endDate || "");
-            const minDaysChanged = editMinDays() !== (trip.currentTrip.minDays || 1);
-            const maxDaysChanged = editMaxDays() !== (trip.currentTrip.maxDays || 7);
-            const budgetChanged = editBudgetEur() !== trip.currentTrip.budgetEur;
-            const minAgeChanged = editMinAge() !== trip.currentTrip.minAge;
-            const maxAgeChanged = editMaxAge() !== trip.currentTrip.maxAge;
-            const travelTypesChanged = JSON.stringify(editTravelTypes()) !== JSON.stringify((trip.currentTrip as any).travelTypes || []);
-
-            setHasChanges(titleChanged || summaryChanged || startDateChanged || endDateChanged || minDaysChanged || maxDaysChanged || budgetChanged || minAgeChanged || maxAgeChanged || travelTypesChanged);
+        if (!isEditing() || !trip.currentTrip) {
+            setHasChanges(false);
+            return;
         }
+
+        const titleChanged = editTitle() !== (trip.currentTrip.title || "");
+        const summaryChanged = editSummary() !== (trip.currentTrip.summary || "");
+        const startDateChanged = editStartDate() !== ((trip.currentTrip as any).startDate || "");
+        const endDateChanged = editEndDate() !== ((trip.currentTrip as any).endDate || "");
+        const minDaysChanged = editMinDays() !== (trip.currentTrip.minDays || 1);
+        const maxDaysChanged = editMaxDays() !== (trip.currentTrip.maxDays || 7);
+        const budgetChanged = editBudgetEur() !== trip.currentTrip.budgetEur;
+        const minAgeChanged = editMinAge() !== trip.currentTrip.minAge;
+        const maxAgeChanged = editMaxAge() !== trip.currentTrip.maxAge;
+        const travelTypesChanged = JSON.stringify(editTravelTypes()) !== JSON.stringify((trip.currentTrip as any).travelTypes || []);
+        const mediaChanged = hasMediaChangesState();
+
+        setHasChanges(
+            titleChanged || 
+            summaryChanged || 
+            startDateChanged || 
+            endDateChanged || 
+            minDaysChanged || 
+            maxDaysChanged || 
+            budgetChanged || 
+            minAgeChanged || 
+            maxAgeChanged || 
+            travelTypesChanged || 
+            mediaChanged
+        );
     });
 
     const handleEdit = () => {
@@ -173,6 +189,8 @@ export const useTripEdit = () => {
         handleEdit,
         handleCancel,
         handleSave,
+        hasMediaChangesState,
+        setHasMediaChangesState, 
         startDateInput,
         endDateInput,
         setStartDateInput: (el: HTMLInputElement) => { startDateInput = el; },

@@ -14,8 +14,9 @@ import { ProfileModals } from "./ProfileModals";
 export const ProfilePage = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
-
+    const [editAge, setEditAge] = createSignal<number | undefined>(undefined);
     const [verificationMessage, setVerificationMessage] = createSignal<{text: string, type: 'success' | 'error'} | null>(null);
+    const [ageError, setAgeError] = createSignal("");
 
     onMount(() => {
         if(!user.isConnected){
@@ -83,6 +84,7 @@ export const ProfilePage = () => {
             setEditDescription(user.profile?.description || "");
             setEditCity(user.profile?.city || "");
             setEditCountry(user.profile?.country || "");
+            setEditAge(user.profile?.age);
         }
     });
 
@@ -94,8 +96,9 @@ export const ProfilePage = () => {
             const descriptionChanged = editDescription() !== (user.profile?.description || "");
             const cityChanged = editCity() !== (user.profile?.city || "");
             const countryChanged = editCountry() !== (user.profile?.country || "");
-            
-            setHasChanges(languagesChanged || budgetChanged || travelTypesChanged || descriptionChanged || cityChanged || countryChanged);
+            const ageChanged = editAge() !== user.profile?.age;
+
+            setHasChanges(languagesChanged || budgetChanged || travelTypesChanged || descriptionChanged || cityChanged || countryChanged || ageChanged);
         } else {
             setHasChanges(false);
         }
@@ -173,13 +176,22 @@ export const ProfilePage = () => {
     };
 
     const confirmSave = async () => {
+
+        setAgeError("");
+
+        if (editAge() !== undefined && (editAge()! < 18 || editAge()! > 120)) {
+            setAgeError("L'âge doit être entre 18 et 120 ans");
+            return;
+        }
+
         const updateData = {
             languages: editLanguages(),
             budgetLevel: editBudgetLevel() as BudgetLevel,
             travelTypes: editTravelTypes(),
             description: editDescription(),
             city: editCity(),
-            country: editCountry()
+            country: editCountry(),
+            age: editAge()
         };
         
         const result = await updateProfile(updateData);
@@ -266,10 +278,16 @@ export const ProfilePage = () => {
                                     editDescription={editDescription()}
                                     editCity={editCity()}
                                     editCountry={editCountry()}
+                                    editAge={editAge()}
                                     onDescriptionChange={setEditDescription}
                                     onCityChange={setEditCity}
                                     onCountryChange={setEditCountry}
+                                    onAgeChange={setEditAge}
                                 />
+
+                                <div class="flex justify-center">
+                                    <div class="w-10/12 h-[1px] bg-gray-200"></div>
+                                </div>
 
                                 <ProfileTravelTypes 
                                     profile={user.profile}
@@ -280,12 +298,20 @@ export const ProfilePage = () => {
                                     onToggleTravelType={toggleTravelType}
                                 />
 
+                                <div class="flex justify-center">
+                                    <div class="w-10/12 h-[1px] bg-gray-200"></div>
+                                </div>
+
                                 <ProfileBudget 
                                     profile={user.profile}
                                     isEditing={isEditing()}
                                     editBudgetLevel={editBudgetLevel() as BudgetLevel}
                                     onBudgetChange={setEditBudgetLevel}
                                 />
+
+                                <div class="flex justify-center">
+                                    <div class="w-10/12 h-[1px] bg-gray-200"></div>
+                                </div>
 
                                 <ProfileLanguages 
                                     languages={user.profile?.languages || []}
@@ -300,6 +326,11 @@ export const ProfilePage = () => {
                                 />
 
                                 <Show when={isEditing()}>
+                                    <Show when={ageError()}>
+                                        <div class="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl text-base">
+                                            {ageError()}
+                                        </div>
+                                    </Show>
                                     <div class="flex gap-4 pt-4">
                                         <button
                                             onClick={cancelEdit}

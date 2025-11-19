@@ -16,7 +16,7 @@ import { useTripData } from "./hooks/useTripData";
 import { useTripEdit } from "./hooks/useTripEdit";
 import { useTripMedia } from "./hooks/useTripMedia";
 import { useTripActions } from "./hooks/useTripActions";
-import { trip } from "../../../stores/tripStore";
+import { getAllTrips, getTripById, trip } from "../../../stores/tripStore";
 import { user } from "../../../stores/userStore";
 import { backend } from "../../../stores/configStore";
 import { TripImages } from "./TripImages";
@@ -42,6 +42,7 @@ export const VoyageDetailPage = () => {
     const {
         isEditing,
         hasChanges,
+        setHasMediaChangesState,
         editTitle,
         setEditTitle,
         editSummary,
@@ -65,7 +66,7 @@ export const VoyageDetailPage = () => {
         handleSave: saveEditChanges,
         startDateInput,
         endDateInput,
-    } = useTripEdit();
+    } = useTripEdit(); 
 
     const {
         uploadError,
@@ -77,8 +78,13 @@ export const VoyageDetailPage = () => {
         moveMediaLeft,
         moveMediaRight,
         saveMediaChanges,
-        temporaryEditMedia
+        temporaryEditMedia,
+        hasMediaChanges 
     } = useTripMedia(isEditing);
+
+    createEffect(() => {
+        setHasMediaChangesState(hasMediaChanges());
+    });
 
     const {
         isRequesting,
@@ -131,7 +137,14 @@ export const VoyageDetailPage = () => {
         if (!mediaSuccess) return;
 
         const temporaryIds = temporaryEditMedia().map(m => String(m.id));
-        await saveEditChanges(temporaryIds);
+        const saveSuccess = await saveEditChanges(temporaryIds);
+    
+        if (saveSuccess && trip.currentTrip?.id) {
+
+            await getTripById(trip.currentTrip.id);
+            
+            await getAllTrips(1, false);
+        }
     };
 
     const handleDeleteTrip = () => {

@@ -14,6 +14,7 @@ export interface UserProfile {
   email?: string;
   city?: string;
   country?: string;
+  age?: number;
   languages: any[];
   travelTypes: string[];
   description?: string;
@@ -121,6 +122,7 @@ const updateUserInDatabase = async (id: string, userData: {
     travelTypes?: string[];
     description?: string;
     city?: string;
+    age?: number;
     country?: string;
     profilePictureUrl?: string;
 }) => {

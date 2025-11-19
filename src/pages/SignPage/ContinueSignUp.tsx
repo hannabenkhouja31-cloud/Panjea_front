@@ -42,6 +42,7 @@ export const ContinueSignUp = () => {
 
     const navigate = useNavigate();
     const [pseudo, setPseudo] = createSignal("");
+    const [age, setAge] = createSignal<number | undefined>(undefined);
     const [error, setError] = createSignal("");
     const [languages, setLanguages] = createSignal<LanguageCode[]>(["fr"]);
     const [selectedIndex, setSelectedIndex] = createSignal(0);
@@ -56,6 +57,12 @@ export const ContinueSignUp = () => {
 
         if (!pseudo()) {
             setError("Le pseudo est requis");
+            stopLoading();
+            return;
+        }
+
+        if (age() !== undefined && (age()! < 18 || age()! > 120)) {
+            setError("L'âge doit être entre 18 et 120 ans");
             stopLoading();
             return;
         }
@@ -106,6 +113,7 @@ export const ContinueSignUp = () => {
             const dbResult = await createUserInDatabase({
                 id: neonUser.id,
                 username: pseudo(),
+                age: age(), 
                 languages: validLanguages,
                 budgetLevel: budgetLevel() as BudgetLevel,
                 travelTypes: selectedTravelTypeSlugs() as unknown as TravelType[],
@@ -135,6 +143,7 @@ export const ContinueSignUp = () => {
                 setUserProfile({
                     id: dbUser.data.id,
                     username: dbUser.data.username,
+                    age: dbUser.data.age,
                     languages: dbUser.data.languages,
                     budgetLevel: dbUser.data.budgetLevel,
                     travelTypes: dbUser.data.travelTypes || [],
@@ -257,6 +266,25 @@ export const ContinueSignUp = () => {
                             placeholder="Choisissez votre pseudo"
                             required
                         />
+                    </div>
+
+                    <div>
+                        <label class="block text-color-dark font-semibold mb-3 text-lg">
+                            Âge <span class="text-gray-400 text-base font-normal">(optionnel)</span>
+                        </label>
+                        <input
+                            type="number"
+                            min="18"
+                            max="120"
+                            value={age() ?? ""}
+                            onInput={(e) => {
+                                const value = e.target.value;
+                                setAge(value ? Number(value) : undefined);
+                            }}
+                            class="w-full px-5 py-4 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition transform focus:scale-[1.01]"
+                            placeholder="Votre âge"
+                        />
+                        <p class="text-sm text-gray-500 mt-2">Vous devez avoir au moins 18 ans pour utiliser Panjéa</p>
                     </div>
 
                     <div>
