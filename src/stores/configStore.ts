@@ -67,11 +67,13 @@ const startNeonAuth = async () => {
 
     const project = await stackClientApp.getProject()
 
-    if(project.displayName === 'Panjea') {
+    const validProjectNames = ['Panjea', 'panjea-staging', 'panjea-production'];
+
+    if(validProjectNames.includes(project.displayName)) {
         neonApp = stackClientApp;
         setBackend("isNeonReady", true);
     } else {
-        console.error('Il y a eu un problème lors de la connexion à NeonAuth');
+        console.error('Il y a eu un problème lors de la connexion à NeonAuth :', project);
         setBackend('isConnected',false)
     }
 
