@@ -212,10 +212,6 @@ export const ContinueSignUp = () => {
                         newOrganizerId: neonUser.id
                     })
                 });
-                setError(dbResult.error || "Erreur lors de la création de l'utilisateur");
-                stopLoading();
-                return;
-            }
 
                 if (transferResponse.ok) {
                     const transferred = await transferResponse.json();
