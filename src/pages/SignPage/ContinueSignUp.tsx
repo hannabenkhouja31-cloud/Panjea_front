@@ -1,4 +1,4 @@
-import { createSignal, For } from "solid-js";
+import {createSignal, For, onMount} from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { LANGUAGE_LABELS, SUPPORTED_LANGUAGES, type BudgetLevel, type LanguageCode, type TravelType } from "../../models";
 import {backend, createUserInDatabase, getNeonApp, migrateBubbleUserInDatabase} from "../../stores/configStore";
@@ -63,11 +63,44 @@ export const ContinueSignUp = () => {
     const [selectedIndex, setSelectedIndex] = createSignal(0);
     const [selectedTravelTypeSlugs, setSelectedTravelTypeSlugs] = createSignal<string[]>([]);
     const [budgetLevel, setBudgetLevel] = createSignal(1);
+    const [isBubbleUser, setIsBubbleUser] = createSignal(false);
+
+    onMount(async () => {
+        const registerInfos = user.registerInfos;
+
+        if (!registerInfos.email) return;
+
+        const userData = await getUserFromDatabaseWithEmail(registerInfos.email);
+
+        if (userData.success && userData.data && userData.data.isFromBubble) {
+            setIsBubbleUser(true);
+
+            if (userData.data.username) {
+                setPseudo(userData.data.username);
+            }
+
+            if (userData.data.age) {
+                setAge(userData.data.age);
+            }
+
+            if (userData.data.languages && userData.data.languages.length > 0) {
+                setLanguages(userData.data.languages);
+            }
+
+            if (userData.data.budgetLevel) {
+                setBudgetLevel(userData.data.budgetLevel);
+            }
+
+            if (userData.data.travelTypes && userData.data.travelTypes.length >= 3) {
+                setSelectedTravelTypeSlugs(userData.data.travelTypes);
+            }
+        }
+    });
 
     const handleSubmit = async (e: Event) => {
+
         e.preventDefault();
         setError("");
-
         startLoading();
 
         if (!pseudo()) {
@@ -327,6 +360,12 @@ export const ContinueSignUp = () => {
                 {error() && (
                     <div class="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl mb-8 text-base animate-shake">
                         {error()}
+                    </div>
+                )}
+
+                {isBubbleUser() && (
+                    <div class="bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-xl mb-8 text-base">
+                        👋 Bon retour ! Nous avons retrouvé votre compte. Vos données ont été préchargées.
                     </div>
                 )}
 
