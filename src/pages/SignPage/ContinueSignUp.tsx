@@ -138,6 +138,17 @@ export const ContinueSignUp = () => {
         let stackAuthUserId: string | null = null;
 
         try {
+            const bubbleCheck = await getUserFromDatabaseWithEmail(registerInfos.email);
+
+            if (bubbleCheck.success && bubbleCheck.data && bubbleCheck.data.isFromBubble) {
+                const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                await fetch(`${backendUrl}/stack-auth/force-delete-by-email`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: registerInfos.email }),
+                });
+            }
+
             const result = await neonApp?.signUpWithCredential({
                 email: registerInfos.email,
                 password: registerInfos.password,
