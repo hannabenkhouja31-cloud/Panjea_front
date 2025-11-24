@@ -350,7 +350,7 @@ export const ContinueSignUp = () => {
             setError("Erreur de connexion au serveur");
             stopLoading();
         }
-    }
+    };
 
     const addLanguage = (e: MouseEvent) => {
         e.preventDefault();
