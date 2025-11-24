@@ -198,35 +198,6 @@ export const ContinueSignUp = () => {
 
             stackAuthUserId = neonUser.id;
 
-            if (bubbleCheck.success && bubbleCheck.data && bubbleCheck.data.isFromBubble) {
-                console.log('🔄 STEP 3.5: Transferring trips to new user ID...');
-                console.log('From:', bubbleCheck.data.id, '→ To:', neonUser.id);
-
-                const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-                const transferResponse = await fetch(`${backendUrl}/trips/transfer-organizer`, {
-                    method: 'PATCH',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        oldOrganizerId: bubbleCheck.data.id,
-                        newOrganizerId: neonUser.id
-                    })
-                });
-
-                if (transferResponse.ok) {
-                    const transferred = await transferResponse.json();
-                    console.log(`✅ Transferred ${transferred.length} trips`);
-                } else {
-                    console.warn('⚠️ Failed to transfer trips');
-                }
-
-                console.log('🗑️ Deleting old Panjéa user...');
-                const deleteOldUserResponse = await fetch(`${backendUrl}/users/${bubbleCheck.data.id}`, {
-                    method: 'DELETE',
-                });
-                console.log('🗑️ Delete status:', deleteOldUserResponse.status);
-            }
-
             setCanRegister(true);
             setRegisterUserId(neonUser.id);
             console.log('🆔 Stack Auth user ID:', stackAuthUserId);
@@ -262,6 +233,35 @@ export const ContinueSignUp = () => {
 
             console.log('✅ User created successfully in Panjéa DB');
             console.log('🔐 STEP 5: Signing in...');
+
+            if (bubbleCheck.success && bubbleCheck.data && bubbleCheck.data.isFromBubble) {
+                console.log('🔄 STEP 3.5: Transferring trips to new user ID...');
+                console.log('From:', bubbleCheck.data.id, '→ To:', neonUser.id);
+
+                const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+                const transferResponse = await fetch(`${backendUrl}/trips/transfer-organizer`, {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        oldOrganizerId: bubbleCheck.data.id,
+                        newOrganizerId: neonUser.id
+                    })
+                });
+
+                if (transferResponse.ok) {
+                    const transferred = await transferResponse.json();
+                    console.log(`✅ Transferred ${transferred.length} trips`);
+                } else {
+                    console.warn('⚠️ Failed to transfer trips');
+                }
+
+                console.log('🗑️ Deleting old Panjéa user...');
+                const deleteOldUserResponse = await fetch(`${backendUrl}/users/${bubbleCheck.data.id}`, {
+                    method: 'DELETE',
+                });
+                console.log('🗑️ Delete status:', deleteOldUserResponse.status);
+            }
 
             const signInResult = await neonApp?.signInWithCredential({
                 email: registerInfos.email,
