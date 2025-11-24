@@ -9,7 +9,10 @@ import {Footer} from "./layout/Footer.tsx";
 import {HomePage} from "./pages/HomePage.tsx";
 import {setIsMenuWhite} from "./stores/styleStore.ts";
 import { backend, getNeonApp, getTravelTypes, pingBackend, startNeonAuth } from './stores/configStore.ts';
-import { getUserFromDatabase, getUserMemberTripsFromDatabase, setUserTrips, user, setUserProfile, login } from './stores/userStore.ts';
+import {
+    getUserFromDatabase, getUserMemberTripsFromDatabase, setUserTrips, user, setUserProfile, login,
+    getUserTripsFromDatabase
+} from './stores/userStore.ts';
 import { loader, startLoading, stopLoading } from './stores/loaderStore.ts';
 import { getAllTrips } from './stores/tripStore.ts';
 import { ConversationsPage } from './pages/Conversations/ConversationsPage.tsx';
@@ -108,23 +111,30 @@ const Layout = (props:any) => {
                         await new Promise(resolve => setTimeout(resolve, 500));
 
                         const memberTrips = await getUserMemberTripsFromDatabase(dbUser.data.id);
-                        
-                        if (memberTrips.success && memberTrips.data) {
-                            setUserTrips(memberTrips.data);
-                            
-                            const tripIds = memberTrips.data.map((t: Trip) => t.id);
-                            
-                            if (tripIds.length > 0) {
-                                await Promise.all(
-                                    tripIds.map((tripId:string) => getMessagesByTripId(tripId, dbUser.data.id, 1))
-                                );
-                                
-                                joinMultipleTripRooms(memberTrips.data, dbUser.data.id);
-                            }
+                        const organizerTrips = await getUserTripsFromDatabase(dbUser.data.id);
 
-                            await getUnansweredQuestions(dbUser.data.id);
+                        const allTrips = [
+                            ...(organizerTrips.success && organizerTrips.data ? organizerTrips.data : []),
+                            ...(memberTrips.success && memberTrips.data ? memberTrips.data : [])
+                        ];
 
+                        const uniqueTrips = Array.from(
+                            new Map(allTrips.map(trip => [trip.id, trip])).values()
+                        );
+
+                        setUserTrips(uniqueTrips);
+
+                        const tripIds = uniqueTrips.map((t: Trip) => t.id);
+
+                        if (tripIds.length > 0) {
+                            await Promise.all(
+                                tripIds.map((tripId:string) => getMessagesByTripId(tripId, dbUser.data.id, 1))
+                            );
+
+                            joinMultipleTripRooms(uniqueTrips, dbUser.data.id);
                         }
+
+                        await getUnansweredQuestions(dbUser.data.id);
 
                         login();
 
