@@ -1,8 +1,22 @@
 import { createSignal, For } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { LANGUAGE_LABELS, SUPPORTED_LANGUAGES, type BudgetLevel, type LanguageCode, type TravelType } from "../../models";
-import { backend, createUserInDatabase, getNeonApp } from "../../stores/configStore";
-import { getUserFromDatabase, getUserTripsFromDatabase, login, setCanRegister, setRegisterBudgetLevel, setRegisterLanguages, setRegisterPseudo, setRegisterTravelTypes, setRegisterUserId, setUserProfile, setUserTrips, user } from "../../stores/userStore";
+import {backend, createUserInDatabase, getNeonApp, migrateBubbleUserInDatabase} from "../../stores/configStore";
+import {
+    getUserFromDatabase,
+    getUserFromDatabaseWithEmail,
+    getUserTripsFromDatabase,
+    login,
+    setCanRegister,
+    setRegisterBudgetLevel,
+    setRegisterLanguages,
+    setRegisterPseudo,
+    setRegisterTravelTypes,
+    setRegisterUserId,
+    setUserProfile,
+    setUserTrips,
+    user
+} from "../../stores/userStore";
 import { startLoading, stopLoading } from "../../stores/loaderStore";
 import { getAllTrips } from "../../stores/tripStore";
 
@@ -41,6 +55,7 @@ export const ContinueSignUp = () => {
     let myModalTravel: HTMLDialogElement | undefined;
 
     const navigate = useNavigate();
+
     const [pseudo, setPseudo] = createSignal("");
     const [age, setAge] = createSignal<number | undefined>(undefined);
     const [error, setError] = createSignal("");
@@ -110,63 +125,125 @@ export const ContinueSignUp = () => {
             setCanRegister(true);
             setRegisterUserId(neonUser.id);
 
-            const dbResult = await createUserInDatabase({
-                id: neonUser.id,
-                username: pseudo(),
-                age: age(), 
-                languages: validLanguages,
-                budgetLevel: budgetLevel() as BudgetLevel,
-                travelTypes: selectedTravelTypeSlugs() as unknown as TravelType[],
-                email: registerInfos.email,
-            });
+            const userData = await getUserFromDatabaseWithEmail(registerInfos.email);
 
-            if (!dbResult.success) {
-                setError(dbResult.error || "Erreur lors de la création de l'utilisateur");
-                stopLoading();
-                return;
-            }
-
-            const signInResult = await neonApp?.signInWithCredential({
-                email: registerInfos.email,
-                password: registerInfos.password,
-            });
-
-            if (signInResult?.status === 'error') {
-                setError(`Inscription créée mais connexion échouée : ${signInResult.error.humanReadableMessage}`);
-                stopLoading();
-                return;
-            }
-
-            const dbUser = await getUserFromDatabase(neonUser.id);
-
-            if (dbUser.success && dbUser.data) {
-                setUserProfile({
-                    id: dbUser.data.id,
-                    username: dbUser.data.username,
-                    age: dbUser.data.age,
-                    languages: dbUser.data.languages,
-                    budgetLevel: dbUser.data.budgetLevel,
-                    travelTypes: dbUser.data.travelTypes || [],
-                    city: dbUser.data.city,
-                    country: dbUser.data.country,
-                    tripsCount: dbUser.data.tripsCount,
-                    description: dbUser.data.description,
-                    profilePictureUrl: dbUser.data.profilePictureUrl,
-                    isVerified: dbUser.data.isVerified
+            if (!userData.success || !userData.data || !userData.data.isFromBubble) {
+                const dbResult = await createUserInDatabase({
+                    id: neonUser.id,
+                    username: pseudo(),
+                    age: age(),
+                    languages: validLanguages,
+                    budgetLevel: budgetLevel() as BudgetLevel,
+                    travelTypes: selectedTravelTypeSlugs() as unknown as TravelType[],
+                    email: registerInfos.email,
                 });
 
-                const userTrips = await getUserTripsFromDatabase(dbUser.data.id);
-                if (userTrips.success && userTrips.data) {
-                    setUserTrips(userTrips.data);
+                if (!dbResult.success) {
+                    setError(dbResult.error || "Erreur lors de la création de l'utilisateur");
+                    stopLoading();
+                    return;
                 }
+
+                const signInResult = await neonApp?.signInWithCredential({
+                    email: registerInfos.email,
+                    password: registerInfos.password,
+                });
+
+                if (signInResult?.status === 'error') {
+                    setError(`Inscription créée mais connexion échouée : ${signInResult.error.humanReadableMessage}`);
+                    stopLoading();
+                    return;
+                }
+
+                const dbUser = await getUserFromDatabase(neonUser.id);
+
+                if (dbUser.success && dbUser.data) {
+                    setUserProfile({
+                        id: dbUser.data.id,
+                        username: dbUser.data.username,
+                        age: dbUser.data.age,
+                        languages: dbUser.data.languages,
+                        budgetLevel: dbUser.data.budgetLevel,
+                        travelTypes: dbUser.data.travelTypes || [],
+                        city: dbUser.data.city,
+                        country: dbUser.data.country,
+                        tripsCount: dbUser.data.tripsCount,
+                        description: dbUser.data.description,
+                        profilePictureUrl: dbUser.data.profilePictureUrl,
+                        isVerified: dbUser.data.isVerified
+                    });
+
+                    const userTrips = await getUserTripsFromDatabase(dbUser.data.id);
+                    if (userTrips.success && userTrips.data) {
+                        setUserTrips(userTrips.data);
+                    }
+                }
+
+                await getAllTrips();
+                login();
+                stopLoading();
+                navigate("/inscription/photo", { replace: true });
+
+            } else if (userData.success && userData.data && userData.data.isFromBubble) {
+                const migrationResult = await migrateBubbleUserInDatabase(
+                    userData.data.id,
+                    neonUser.id,
+                    {
+                        username: pseudo(),
+                        age: age(),
+                        languages: validLanguages,
+                        budgetLevel: budgetLevel() as BudgetLevel,
+                        travelTypes: selectedTravelTypeSlugs() as unknown as TravelType[],
+                        email: registerInfos.email,
+                    }
+                );
+
+                if (!migrationResult.success) {
+                    setError(migrationResult.error || "Erreur lors de la migration");
+                    stopLoading();
+                    return;
+                }
+
+                const signInResult = await neonApp?.signInWithCredential({
+                    email: registerInfos.email,
+                    password: registerInfos.password,
+                });
+
+                if (signInResult?.status === 'error') {
+                    setError(`Migration réussie mais connexion échouée : ${signInResult.error.humanReadableMessage}`);
+                    stopLoading();
+                    return;
+                }
+
+                const dbUser = await getUserFromDatabase(neonUser.id);
+
+                if (dbUser.success && dbUser.data) {
+                    setUserProfile({
+                        id: dbUser.data.id,
+                        username: dbUser.data.username,
+                        age: dbUser.data.age,
+                        languages: dbUser.data.languages,
+                        budgetLevel: dbUser.data.budgetLevel,
+                        travelTypes: dbUser.data.travelTypes || [],
+                        city: dbUser.data.city,
+                        country: dbUser.data.country,
+                        tripsCount: dbUser.data.tripsCount,
+                        description: dbUser.data.description,
+                        profilePictureUrl: dbUser.data.profilePictureUrl,
+                        isVerified: dbUser.data.isVerified
+                    });
+
+                    const userTrips = await getUserTripsFromDatabase(dbUser.data.id);
+                    if (userTrips.success && userTrips.data) {
+                        setUserTrips(userTrips.data);
+                    }
+                }
+
+                await getAllTrips();
+                login();
+                stopLoading();
+                navigate("/inscription/photo", { replace: true });
             }
-
-            await getAllTrips();
-
-            login();
-            stopLoading();
-            navigate("/inscription/photo", { replace: true });
-
 
         } catch (err) {
             setError("Erreur de connexion au serveur");

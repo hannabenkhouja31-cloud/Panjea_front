@@ -2,14 +2,16 @@ import {A, useNavigate} from "@solidjs/router";
 import {createSignal, onCleanup, onMount, Show, createMemo} from "solid-js";
 import {closeDropdown, logout, setUserProfile, setUserTrips, toggleDropdown, user} from "../stores/userStore.ts";
 import { style } from "../stores/styleStore.ts";
-import {MessageCircle, User, LogOut, Menu, X, Home, Plane, Compass} from "lucide-solid";
+import {MessageCircle, User, LogOut, Menu, X, Home, Plane, Compass } from "lucide-solid";
 import { getNeonApp } from "../stores/configStore.ts";
 import { resetSocket } from "../stores/websocketStore.ts";
 import { startLoading, stopLoading } from "../stores/loaderStore.ts";
 import { getTotalUnreadCount, getUnansweredQuestionsCount } from "../stores/messagesStore.ts";
 
 export const Header = () => {
+
     const navigate = useNavigate();
+
     const [isMobileMenuOpen, setIsMobileMenuOpen] = createSignal(false);
 
     let dropdownRef: HTMLDivElement | undefined;

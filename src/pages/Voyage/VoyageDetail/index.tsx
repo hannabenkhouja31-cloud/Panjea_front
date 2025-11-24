@@ -36,7 +36,8 @@ export const VoyageDetailPage = () => {
         pendingRequests,
         memberStatus,
         loadTripMembers,
-        loadPendingRequests
+        loadPendingRequests,
+        checkMemberStatus
     } = useTripData();
 
     const {
@@ -121,6 +122,21 @@ export const VoyageDetailPage = () => {
             navigate("/voyage", { replace: true });
         }
     });
+
+    const handleJoinAndReload = async () => {
+        await handleRequestToJoin();
+
+        if (trip.currentTrip && user.profile?.id) {
+
+            await checkMemberStatus(trip.currentTrip.id, user.profile.id);
+            if (isUserTrip()) {
+                await loadPendingRequests(
+                    trip.currentTrip.id,
+                    (trip.currentTrip as any).organizerId
+                );
+            }
+        }
+    };
 
     const isUserTrip = () => {
         return user.profile?.id === (trip.currentTrip as any)?.organizerId;
@@ -257,7 +273,7 @@ export const VoyageDetailPage = () => {
                                     hasChanges={hasChanges}
                                     memberStatus={memberStatus}
                                     isRequesting={isRequesting}
-                                    onRequestToJoin={handleRequestToJoin}
+                                    onRequestToJoin={handleJoinAndReload}
                                     onAskQuestion={openQuestionModal}
                                     onEdit={handleEdit}
                                     onCancel={handleCancel}

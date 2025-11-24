@@ -1,5 +1,5 @@
 import { Show } from "solid-js";
-import { UserCircle, MapPin } from "lucide-solid";
+import {UserCircle, MapPin, Cake} from "lucide-solid";
 import type { ProfilePersonalInfoProps } from "./types";
 import { capitalizeFirst, getLocation } from "./utils";
 
@@ -78,6 +78,7 @@ export const ProfilePersonalInfo = (props: ProfilePersonalInfoProps) => {
                     </div>
                     <Show when={props.profile?.age}>
                         <div class="flex items-center gap-3">
+                            <Cake />
                             <span class="text-black font-medium text-lg">{props.profile?.age} ans</span>
                         </div>
                     </Show>

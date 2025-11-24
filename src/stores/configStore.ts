@@ -79,6 +79,24 @@ const startNeonAuth = async () => {
 
 }
 
+const migrateBubbleUserInDatabase = async (oldId: string, newId: string, userData: any) => {
+    try {
+        const response = await fetch(backendUrl + `/users/migrate-bubble`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ oldId, newId, userData }),
+        });
+
+        if (response.status === 200) {
+            const data = await response.json();
+            return { success: true, data };
+        }
+        return { success: false, error: "Erreur migration" };
+    } catch (e) {
+        return { success: false, error: "Erreur connexion" };
+    }
+};
+
 
 const createUserInDatabase = async (userData: {
     id: string;
@@ -115,6 +133,7 @@ export {
     backend,
     pingBackend,
     startNeonAuth,
+    migrateBubbleUserInDatabase,
     getNeonApp,
     getTravelTypes,
     createUserInDatabase,

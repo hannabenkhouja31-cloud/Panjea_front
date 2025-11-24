@@ -12,7 +12,9 @@ import { ProfileTrips } from "./ProfileTrips";
 import { ProfileModals } from "./ProfileModals";
 
 export const ProfilePage = () => {
+
     const navigate = useNavigate();
+    
     const [searchParams, setSearchParams] = useSearchParams();
     const [editAge, setEditAge] = createSignal<number | undefined>(undefined);
     const [verificationMessage, setVerificationMessage] = createSignal<{text: string, type: 'success' | 'error'} | null>(null);

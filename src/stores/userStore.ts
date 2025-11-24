@@ -49,6 +49,8 @@ interface UserStore {
   trips: Trip[];
   registerInfos: RegisterInfos;
   isDropdownOpen: boolean;
+  email:string;
+  isFromBubble: boolean;
 }
 
 const [user, setUser] = createStore<UserStore>({
@@ -65,7 +67,9 @@ const [user, setUser] = createStore<UserStore>({
         travelTypes: [],
         canRegister: false,
     },
-    isDropdownOpen: false
+    isDropdownOpen: false,
+    email: "",
+    isFromBubble: false,
 });
 
 const getUserFromDatabase = async (id: string) => {
@@ -81,6 +85,24 @@ const getUserFromDatabase = async (id: string) => {
     } catch (error) {
         console.error("Impossible de récupérer l'utilisateur : ", error);
         return { success: false, error: "Impossible de communiquer avec le backend" };
+    }
+}
+
+const getUserFromDatabaseWithEmail = async (email: string) => {
+    try {
+        const response = await fetch(backendUrl + `/users/by-email/${email}`);
+
+        if (response.status === 200) {
+            const userData = await response.json();
+            return { success: true, data: userData };
+        } else if (response.status === 404) {
+            return { success: false, error: "Utilisateur non trouvé", data: null };
+        } else {
+            return { success: false, error: "Erreur serveur", data: null };
+        }
+    } catch (error) {
+        console.error("Impossible de récupérer l'utilisateur : ", error);
+        return { success: false, error: "Impossible de communiquer avec le backend", data: null };
     }
 }
 
@@ -125,6 +147,8 @@ const updateUserInDatabase = async (id: string, userData: {
     age?: number;
     country?: string;
     profilePictureUrl?: string;
+    id?: string;
+
 }) => {
     try {
         const response = await fetch(backendUrl + `/users/${id}`, {
@@ -155,6 +179,10 @@ const updateProfile = async (updateData: {
     city?: string;
     country?: string;
     profilePictureUrl?: string;
+    username?: string;
+    age?: number;
+    id?: string;
+    email?: string;
 }) => {
     if (!user.profile?.id) {
         return { success: false, error: "Aucun profil utilisateur" };
@@ -357,6 +385,8 @@ export {
     setRegisterBudgetLevel,
     setRegisterTravelTypes,
     getUserMemberTripsFromDatabase,
+    getUserFromDatabaseWithEmail,
+    updateUserInDatabase,
     login,
     logout,
     toggleDropdown,

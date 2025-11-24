@@ -28,6 +28,8 @@ export interface User {
   bannedAt?: Date;
   bannedReason?: string;
   createdAt: Date;
+  email?: string;
+  isFromBubble?: boolean;
 }
 
 export interface CreateUser {
@@ -43,6 +45,7 @@ export interface CreateUser {
 }
 
 export interface UpdateUser {
+  id?: string;
   username?: string;
   city?: string;
   country?: string;
