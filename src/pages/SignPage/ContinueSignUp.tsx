@@ -135,6 +135,7 @@ export const ContinueSignUp = () => {
 
         const neonApp = getNeonApp();
         const registerInfos = user.registerInfos;
+        let stackAuthUserId: string | null = null;
 
         try {
             const result = await neonApp?.signUpWithCredential({
@@ -155,6 +156,7 @@ export const ContinueSignUp = () => {
                 return;
             }
 
+            stackAuthUserId = neonUser.id;
             setCanRegister(true);
             setRegisterUserId(neonUser.id);
 
@@ -172,6 +174,12 @@ export const ContinueSignUp = () => {
                 });
 
                 if (!dbResult.success) {
+                    // @ts-expect-error Stack Auth signOut exists but not in types
+                    await neonApp?.signOut();
+                    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                    await fetch(`${backendUrl}/stack-auth/delete-user/${stackAuthUserId}`, {
+                        method: 'DELETE',
+                    });
                     setError(dbResult.error || "Erreur lors de la création de l'utilisateur");
                     stopLoading();
                     return;
@@ -232,6 +240,12 @@ export const ContinueSignUp = () => {
                 );
 
                 if (!migrationResult.success) {
+                    // @ts-expect-error Stack Auth signOut exists but not in types
+                    await neonApp?.signOut();
+                    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                    await fetch(`${backendUrl}/stack-auth/delete-user/${stackAuthUserId}`, {
+                        method: 'DELETE',
+                    });
                     setError(migrationResult.error || "Erreur lors de la migration");
                     stopLoading();
                     return;
@@ -279,6 +293,14 @@ export const ContinueSignUp = () => {
             }
 
         } catch (err) {
+            if (stackAuthUserId) {
+                // @ts-expect-error Stack Auth signOut exists but not in types
+                await neonApp?.signOut();
+                const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                await fetch(`${backendUrl}/stack-auth/delete-user/${stackAuthUserId}`, {
+                    method: 'DELETE',
+                });
+            }
             setError("Erreur de connexion au serveur");
             stopLoading();
         }
