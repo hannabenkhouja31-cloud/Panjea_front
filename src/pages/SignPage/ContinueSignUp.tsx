@@ -197,72 +197,81 @@ export const ContinueSignUp = () => {
             }
 
             stackAuthUserId = neonUser.id;
-
             setCanRegister(true);
             setRegisterUserId(neonUser.id);
             console.log('🆔 Stack Auth user ID:', stackAuthUserId);
 
-            console.log('💾 STEP 4: Creating user in Panjéa DB...');
-            const dbResult = await createUserInDatabase({
-                id: neonUser.id,
-                username: pseudo(),
-                age: age(),
-                languages: validLanguages,
-                budgetLevel: budgetLevel() as BudgetLevel,
-                travelTypes: selectedTravelTypeSlugs() as unknown as TravelType[],
-                email: registerInfos.email,
-            });
-
-            console.log('💾 Panjéa DB creation result:', {
-                success: dbResult.success,
-                error: dbResult.success ? null : dbResult.error
-            });
-
-            if (!dbResult.success) {
-                console.error('❌ Failed to create user in Panjéa DB, rolling back...');
-                // @ts-expect-error Stack Auth signOut exists but not in types
-                await neonApp?.signOut();
-                const backendUrl = import.meta.env.VITE_BACKEND_URL;
-                await fetch(`${backendUrl}/stack-auth/delete-user/${stackAuthUserId}`, {
-                    method: 'DELETE',
-                });
-                setError(dbResult.error || "Erreur lors de la création de l'utilisateur");
-                stopLoading();
-                return;
-            }
-
-            console.log('✅ User created successfully in Panjéa DB');
-            console.log('🔐 STEP 5: Signing in...');
+            const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
             if (bubbleCheck.success && bubbleCheck.data && bubbleCheck.data.isFromBubble) {
-                console.log('🔄 STEP 3.5: Transferring trips to new user ID...');
-                console.log('From:', bubbleCheck.data.id, '→ To:', neonUser.id);
 
-                const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                console.log('🔄 STEP 4: Migrating Bubble user...');
 
-                const transferResponse = await fetch(`${backendUrl}/trips/transfer-organizer`, {
-                    method: 'PATCH',
+                const migrateResponse = await fetch(`${backendUrl}/users/migrate-bubble`, {
+                    method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                        oldOrganizerId: bubbleCheck.data.id,
-                        newOrganizerId: neonUser.id
+                        oldId: bubbleCheck.data.id,
+                        newId: neonUser.id,
+                        userData: {
+                            username: pseudo(),
+                            age: age(),
+                            languages: validLanguages,
+                            budgetLevel: budgetLevel(),
+                            travelTypes: selectedTravelTypeSlugs(),
+                            email: registerInfos.email,
+                        }
                     })
                 });
 
-                if (transferResponse.ok) {
-                    const transferred = await transferResponse.json();
-                    console.log(`✅ Transferred ${transferred.length} trips`);
-                } else {
-                    console.warn('⚠️ Failed to transfer trips');
+                if (!migrateResponse.ok) {
+                    console.error('❌ Failed to migrate Bubble user, rolling back...');
+                    // @ts-expect-error Stack Auth signOut exists but not in types
+                    await neonApp?.signOut();
+                    await fetch(`${backendUrl}/stack-auth/delete-user/${stackAuthUserId}`, {
+                        method: 'DELETE',
+                    });
+                    setError("Erreur lors de la migration de l'utilisateur");
+                    stopLoading();
+                    return;
                 }
 
-                console.log('🗑️ Deleting old Panjéa user...');
-                const deleteOldUserResponse = await fetch(`${backendUrl}/users/${bubbleCheck.data.id}`, {
-                    method: 'DELETE',
+                console.log('✅ Bubble user migrated successfully');
+            } else {
+
+                console.log('💾 STEP 4: Creating new user in Panjéa DB...');
+
+                const dbResult = await createUserInDatabase({
+                    id: neonUser.id,
+                    username: pseudo(),
+                    age: age(),
+                    languages: validLanguages,
+                    budgetLevel: budgetLevel() as BudgetLevel,
+                    travelTypes: selectedTravelTypeSlugs() as unknown as TravelType[],
+                    email: registerInfos.email,
                 });
-                console.log('🗑️ Delete status:', deleteOldUserResponse.status);
+
+                console.log('💾 Panjéa DB creation result:', {
+                    success: dbResult.success,
+                    error: dbResult.success ? null : dbResult.error
+                });
+
+                if (!dbResult.success) {
+                    console.error('❌ Failed to create user in Panjéa DB, rolling back...');
+                    // @ts-expect-error Stack Auth signOut exists but not in types
+                    await neonApp?.signOut();
+                    await fetch(`${backendUrl}/stack-auth/delete-user/${stackAuthUserId}`, {
+                        method: 'DELETE',
+                    });
+                    setError(dbResult.error || "Erreur lors de la création de l'utilisateur");
+                    stopLoading();
+                    return;
+                }
+
+                console.log('✅ User created successfully in Panjéa DB');
             }
 
+            console.log('🔐 STEP 5: Signing in...');
             const signInResult = await neonApp?.signInWithCredential({
                 email: registerInfos.email,
                 password: registerInfos.password,
