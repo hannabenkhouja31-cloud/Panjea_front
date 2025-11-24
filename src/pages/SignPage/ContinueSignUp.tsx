@@ -1,7 +1,7 @@
 import {createSignal, For, onMount} from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { LANGUAGE_LABELS, SUPPORTED_LANGUAGES, type BudgetLevel, type LanguageCode, type TravelType } from "../../models";
-import {backend, createUserInDatabase, getNeonApp, migrateBubbleUserInDatabase} from "../../stores/configStore";
+import {backend, createUserInDatabase, getNeonApp } from "../../stores/configStore";
 import {
     getUserFromDatabase,
     getUserFromDatabaseWithEmail,
@@ -98,7 +98,6 @@ export const ContinueSignUp = () => {
     });
 
     const handleSubmit = async (e: Event) => {
-
         e.preventDefault();
         setError("");
         startLoading();
@@ -138,30 +137,76 @@ export const ContinueSignUp = () => {
         let stackAuthUserId: string | null = null;
 
         try {
+            console.log('🔍 STEP 1: Checking if user exists in Panjéa DB');
+            console.log('Email:', registerInfos.email);
+
             const bubbleCheck = await getUserFromDatabaseWithEmail(registerInfos.email);
+            console.log('📊 Bubble check result:', {
+                success: bubbleCheck.success,
+                hasData: !!bubbleCheck.data,
+                isFromBubble: bubbleCheck.data?.isFromBubble,
+                userId: bubbleCheck.data?.id
+            });
 
             if (bubbleCheck.success && bubbleCheck.data && bubbleCheck.data.isFromBubble) {
+                console.log('🧹 STEP 2: User is from Bubble, deleting old Panjéa user...');
+                console.log('Old user ID to delete:', bubbleCheck.data.id);
+
                 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-                await fetch(`${backendUrl}/stack-auth/force-delete-by-email`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: registerInfos.email }),
+
+                const deleteOldUserResponse = await fetch(`${backendUrl}/users/${bubbleCheck.data.id}`, {
+                    method: 'DELETE',
                 });
+
+                console.log('🗑️ Delete old Panjéa user status:', deleteOldUserResponse.status);
+
+                if (deleteOldUserResponse.ok) {
+                    console.log('✅ Old Panjéa user deleted successfully');
+                } else {
+                    console.error('❌ Failed to delete old Panjéa user');
+                }
+
+                console.log('🧹 Cleaning Stack Auth just in case...');
+                const cleanupResponse = await fetch(`${backendUrl}/stack-auth/force-delete-by-email`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email: registerInfos.email}),
+                });
+                console.log('🧹 Stack Auth cleanup status:', cleanupResponse.status);
+
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                console.log('⏰ Waited 2s after cleanup');
             }
 
+            console.log('🚀 STEP 3: Creating Stack Auth account...');
             const result = await neonApp?.signUpWithCredential({
                 email: registerInfos.email,
                 password: registerInfos.password,
             });
 
+            console.log('📝 Stack Auth signup result:', {
+                status: result?.status,
+                hasError: result?.status === 'error',
+                errorMessage: result?.status === 'error' ? result.error.humanReadableMessage : null
+            });
+
             if (result?.status === 'error') {
+                console.error('❌ Stack Auth signup failed');
                 setError(`Inscription échouée: ${result.error.humanReadableMessage}`);
                 stopLoading();
                 return;
             }
 
+            console.log('✅ Stack Auth signup successful');
+
             const neonUser = await neonApp?.getUser();
+            console.log('👤 Retrieved Stack Auth user:', {
+                id: neonUser?.id,
+                email: neonUser?.primaryEmail
+            });
+
             if (!neonUser?.id) {
+                console.error('❌ No user ID from Stack Auth');
                 setError("Erreur lors de la récupération de l'utilisateur");
                 stopLoading();
                 return;
@@ -170,152 +215,124 @@ export const ContinueSignUp = () => {
             stackAuthUserId = neonUser.id;
             setCanRegister(true);
             setRegisterUserId(neonUser.id);
+            console.log('🆔 Stack Auth user ID:', stackAuthUserId);
 
-            const userData = await getUserFromDatabaseWithEmail(registerInfos.email);
+            console.log('💾 STEP 4: Creating user in Panjéa DB...');
+            const dbResult = await createUserInDatabase({
+                id: neonUser.id,
+                username: pseudo(),
+                age: age(),
+                languages: validLanguages,
+                budgetLevel: budgetLevel() as BudgetLevel,
+                travelTypes: selectedTravelTypeSlugs() as unknown as TravelType[],
+                email: registerInfos.email,
+            });
 
-            if (!userData.success || !userData.data || !userData.data.isFromBubble) {
-                const dbResult = await createUserInDatabase({
-                    id: neonUser.id,
-                    username: pseudo(),
-                    age: age(),
-                    languages: validLanguages,
-                    budgetLevel: budgetLevel() as BudgetLevel,
-                    travelTypes: selectedTravelTypeSlugs() as unknown as TravelType[],
-                    email: registerInfos.email,
-                });
+            console.log('💾 Panjéa DB creation result:', {
+                success: dbResult.success,
+                error: dbResult.success ? null : dbResult.error
+            });
 
-                if (!dbResult.success) {
-                    // @ts-expect-error Stack Auth signOut exists but not in types
-                    await neonApp?.signOut();
-                    const backendUrl = import.meta.env.VITE_BACKEND_URL;
-                    await fetch(`${backendUrl}/stack-auth/delete-user/${stackAuthUserId}`, {
-                        method: 'DELETE',
-                    });
-                    setError(dbResult.error || "Erreur lors de la création de l'utilisateur");
-                    stopLoading();
-                    return;
-                }
-
-                const signInResult = await neonApp?.signInWithCredential({
-                    email: registerInfos.email,
-                    password: registerInfos.password,
-                });
-
-                if (signInResult?.status === 'error') {
-                    setError(`Inscription créée mais connexion échouée : ${signInResult.error.humanReadableMessage}`);
-                    stopLoading();
-                    return;
-                }
-
-                const dbUser = await getUserFromDatabase(neonUser.id);
-
-                if (dbUser.success && dbUser.data) {
-                    setUserProfile({
-                        id: dbUser.data.id,
-                        username: dbUser.data.username,
-                        age: dbUser.data.age,
-                        languages: dbUser.data.languages,
-                        budgetLevel: dbUser.data.budgetLevel,
-                        travelTypes: dbUser.data.travelTypes || [],
-                        city: dbUser.data.city,
-                        country: dbUser.data.country,
-                        tripsCount: dbUser.data.tripsCount,
-                        description: dbUser.data.description,
-                        profilePictureUrl: dbUser.data.profilePictureUrl,
-                        isVerified: dbUser.data.isVerified
-                    });
-
-                    const userTrips = await getUserTripsFromDatabase(dbUser.data.id);
-                    if (userTrips.success && userTrips.data) {
-                        setUserTrips(userTrips.data);
-                    }
-                }
-
-                await getAllTrips();
-                login();
-                stopLoading();
-                navigate("/inscription/photo", { replace: true });
-
-            } else if (userData.success && userData.data && userData.data.isFromBubble) {
-                const migrationResult = await migrateBubbleUserInDatabase(
-                    userData.data.id,
-                    neonUser.id,
-                    {
-                        username: pseudo(),
-                        age: age(),
-                        languages: validLanguages,
-                        budgetLevel: budgetLevel() as BudgetLevel,
-                        travelTypes: selectedTravelTypeSlugs() as unknown as TravelType[],
-                        email: registerInfos.email,
-                    }
-                );
-
-                if (!migrationResult.success) {
-                    // @ts-expect-error Stack Auth signOut exists but not in types
-                    await neonApp?.signOut();
-                    const backendUrl = import.meta.env.VITE_BACKEND_URL;
-                    await fetch(`${backendUrl}/stack-auth/delete-user/${stackAuthUserId}`, {
-                        method: 'DELETE',
-                    });
-                    setError(migrationResult.error || "Erreur lors de la migration");
-                    stopLoading();
-                    return;
-                }
-
-                const signInResult = await neonApp?.signInWithCredential({
-                    email: registerInfos.email,
-                    password: registerInfos.password,
-                });
-
-                if (signInResult?.status === 'error') {
-                    setError(`Migration réussie mais connexion échouée : ${signInResult.error.humanReadableMessage}`);
-                    stopLoading();
-                    return;
-                }
-
-                const dbUser = await getUserFromDatabase(neonUser.id);
-
-                if (dbUser.success && dbUser.data) {
-                    setUserProfile({
-                        id: dbUser.data.id,
-                        username: dbUser.data.username,
-                        age: dbUser.data.age,
-                        languages: dbUser.data.languages,
-                        budgetLevel: dbUser.data.budgetLevel,
-                        travelTypes: dbUser.data.travelTypes || [],
-                        city: dbUser.data.city,
-                        country: dbUser.data.country,
-                        tripsCount: dbUser.data.tripsCount,
-                        description: dbUser.data.description,
-                        profilePictureUrl: dbUser.data.profilePictureUrl,
-                        isVerified: dbUser.data.isVerified
-                    });
-
-                    const userTrips = await getUserTripsFromDatabase(dbUser.data.id);
-                    if (userTrips.success && userTrips.data) {
-                        setUserTrips(userTrips.data);
-                    }
-                }
-
-                await getAllTrips();
-                login();
-                stopLoading();
-                navigate("/inscription/photo", { replace: true });
-            }
-
-        } catch (err) {
-            if (stackAuthUserId) {
+            if (!dbResult.success) {
+                console.error('❌ Failed to create user in Panjéa DB, rolling back...');
                 // @ts-expect-error Stack Auth signOut exists but not in types
                 await neonApp?.signOut();
                 const backendUrl = import.meta.env.VITE_BACKEND_URL;
                 await fetch(`${backendUrl}/stack-auth/delete-user/${stackAuthUserId}`, {
                     method: 'DELETE',
                 });
+                setError(dbResult.error || "Erreur lors de la création de l'utilisateur");
+                stopLoading();
+                return;
+            }
+
+            console.log('✅ User created successfully in Panjéa DB');
+            console.log('🔐 STEP 5: Signing in...');
+
+            const signInResult = await neonApp?.signInWithCredential({
+                email: registerInfos.email,
+                password: registerInfos.password,
+            });
+
+            console.log('🔐 Sign in result:', {
+                status: signInResult?.status,
+                hasError: signInResult?.status === 'error'
+            });
+
+            if (signInResult?.status === 'error') {
+                console.error('❌ Sign in failed');
+                setError(`Inscription créée mais connexion échouée : ${signInResult.error.humanReadableMessage}`);
+                stopLoading();
+                return;
+            }
+
+            console.log('✅ Sign in successful');
+            console.log('📥 STEP 6: Fetching user profile...');
+
+            const dbUser = await getUserFromDatabase(neonUser.id);
+            console.log('📥 User profile result:', {
+                success: dbUser.success,
+                hasData: !!dbUser.data
+            });
+
+            if (dbUser.success && dbUser.data) {
+                setUserProfile({
+                    id: dbUser.data.id,
+                    username: dbUser.data.username,
+                    age: dbUser.data.age,
+                    languages: dbUser.data.languages,
+                    budgetLevel: dbUser.data.budgetLevel,
+                    travelTypes: dbUser.data.travelTypes || [],
+                    city: dbUser.data.city,
+                    country: dbUser.data.country,
+                    tripsCount: dbUser.data.tripsCount,
+                    description: dbUser.data.description,
+                    profilePictureUrl: dbUser.data.profilePictureUrl,
+                    isVerified: dbUser.data.isVerified
+                });
+
+                console.log('📦 Fetching user trips...');
+                const userTrips = await getUserTripsFromDatabase(dbUser.data.id);
+                if (userTrips.success && userTrips.data) {
+                    setUserTrips(userTrips.data);
+                    console.log('✅ User trips loaded:', userTrips.data.length);
+                }
+            }
+
+            console.log('🌍 Loading all trips...');
+            await getAllTrips();
+
+            console.log('✅ REGISTRATION COMPLETE!');
+            login();
+            stopLoading();
+            navigate("/inscription/photo", {replace: true});
+
+        } catch (err) {
+            console.error('💥 FATAL ERROR:', err);
+            const error = err as Error;
+            console.error('Error details:', {
+                message: error.message || 'Unknown error',
+                stack: error.stack || 'No stack trace'
+            });
+
+            if (stackAuthUserId) {
+                console.log('🔄 Rolling back Stack Auth user...');
+                try {
+                    // @ts-expect-error Stack Auth signOut exists but not in types
+                    await neonApp?.signOut();
+                    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+                    await fetch(`${backendUrl}/stack-auth/delete-user/${stackAuthUserId}`, {
+                        method: 'DELETE',
+                    });
+                    console.log('✅ Rollback completed');
+                } catch (rollbackErr) {
+                    console.error('❌ Rollback failed:', rollbackErr);
+                }
             }
             setError("Erreur de connexion au serveur");
             stopLoading();
         }
-    };
+    }
 
     const addLanguage = (e: MouseEvent) => {
         e.preventDefault();
