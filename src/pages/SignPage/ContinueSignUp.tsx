@@ -149,31 +149,15 @@ export const ContinueSignUp = () => {
             });
 
             if (bubbleCheck.success && bubbleCheck.data && bubbleCheck.data.isFromBubble) {
-                console.log('🧹 STEP 2: User is from Bubble, deleting old Panjéa user...');
-                console.log('Old user ID to delete:', bubbleCheck.data.id);
+                console.log('🧹 STEP 2: User is from Bubble, cleaning Stack Auth...');
 
                 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-                const deleteOldUserResponse = await fetch(`${backendUrl}/users/${bubbleCheck.data.id}`, {
-                    method: 'DELETE',
-                });
-
-                console.log('🗑️ Delete old Panjéa user status:', deleteOldUserResponse.status);
-
-                if (deleteOldUserResponse.ok) {
-                    console.log('✅ Old Panjéa user deleted successfully');
-                } else {
-                    console.error('❌ Failed to delete old Panjéa user');
-                }
-
-                console.log('🧹 Cleaning Stack Auth just in case...');
                 const cleanupResponse = await fetch(`${backendUrl}/stack-auth/force-delete-by-email`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({email: registerInfos.email}),
                 });
                 console.log('🧹 Stack Auth cleanup status:', cleanupResponse.status);
-
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 console.log('⏰ Waited 2s after cleanup');
             }
@@ -213,6 +197,40 @@ export const ContinueSignUp = () => {
             }
 
             stackAuthUserId = neonUser.id;
+
+            if (bubbleCheck.success && bubbleCheck.data && bubbleCheck.data.isFromBubble) {
+                console.log('🔄 STEP 3.5: Transferring trips to new user ID...');
+                console.log('From:', bubbleCheck.data.id, '→ To:', neonUser.id);
+
+                const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+                const transferResponse = await fetch(`${backendUrl}/trips/transfer-organizer`, {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        oldOrganizerId: bubbleCheck.data.id,
+                        newOrganizerId: neonUser.id
+                    })
+                });
+                setError(dbResult.error || "Erreur lors de la création de l'utilisateur");
+                stopLoading();
+                return;
+            }
+
+                if (transferResponse.ok) {
+                    const transferred = await transferResponse.json();
+                    console.log(`✅ Transferred ${transferred.length} trips`);
+                } else {
+                    console.warn('⚠️ Failed to transfer trips');
+                }
+
+                console.log('🗑️ Deleting old Panjéa user...');
+                const deleteOldUserResponse = await fetch(`${backendUrl}/users/${bubbleCheck.data.id}`, {
+                    method: 'DELETE',
+                });
+                console.log('🗑️ Delete status:', deleteOldUserResponse.status);
+            }
+
             setCanRegister(true);
             setRegisterUserId(neonUser.id);
             console.log('🆔 Stack Auth user ID:', stackAuthUserId);
