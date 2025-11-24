@@ -1,12 +1,18 @@
-import { createSignal } from "solid-js";
-import { A, useNavigate } from "@solidjs/router";
+import { createSignal, onMount } from "solid-js";
+import { A, useLocation, useNavigate } from "@solidjs/router";
 import { Eye, EyeOff } from "lucide-solid";
 import { backend } from "../../stores/configStore";
 import { setRegisterEmail, setRegisterPassword } from "../../stores/userStore";
 
+interface LocationState {
+    fromBubble?: boolean;
+    email?: string;
+}
+
 export const SignUpPage = () => {
 
     const navigate = useNavigate();
+    const location = useLocation<LocationState>();
 
     const [email, setEmail] = createSignal("");
     const [password, setPassword] = createSignal("");
@@ -14,6 +20,16 @@ export const SignUpPage = () => {
     const [error, setError] = createSignal("");
     const [showPassword, setShowPassword] = createSignal(false);
     const [showConfirmPassword, setShowConfirmPassword] = createSignal(false);
+    const [bubbleMessage, setBubbleMessage] = createSignal(false);
+
+    onMount(() => {
+        if (location.state?.fromBubble) {
+            setBubbleMessage(true);
+            if (location.state?.email) {
+                setEmail(location.state.email);
+            }
+        }
+    });
 
     const handleSubmit = async (e: Event) => {
 
@@ -60,6 +76,13 @@ export const SignUpPage = () => {
                         <h1 class="text-5xl font-bold text-color-dark mb-3">Créer un compte</h1>
                         <p class="text-gray-500 text-lg">Rejoignez la communauté Panjéa</p>
                     </div>
+
+                    {bubbleMessage() && (
+                        <div class="bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-xl mb-8 text-base">
+                            👋 Bienvenue ! Vous aviez déjà un compte sur l'ancienne version de Panjéa.
+                            Veuillez créer un nouveau mot de passe pour finaliser la migration de votre compte.
+                        </div>
+                    )}
 
                     {error() && (
                         <div class="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl mb-8 text-base">
@@ -132,7 +155,7 @@ export const SignUpPage = () => {
 
                     <p class="text-center text-base text-gray-500 mt-8">
                         Vous avez déjà un compte ?{" "}
-                        <A href="/" class="text-color-main font-bold hover:underline">
+                        <A href="/connexion" class="text-color-main font-bold hover:underline">
                             Se connecter
                         </A>
                     </p>

@@ -1,12 +1,14 @@
 import { createSignal } from "solid-js";
-import { A } from "@solidjs/router";
+import { A, useNavigate } from "@solidjs/router";
 import { Eye, EyeOff } from "lucide-solid";
 import { backend, getNeonApp } from "../../stores/configStore";
-import { getUserFromDatabase, getUserTripsFromDatabase, login, setUserProfile, setUserTrips } from "../../stores/userStore";
+import { getUserFromDatabase, getUserFromDatabaseWithEmail, getUserTripsFromDatabase, login, setUserProfile, setUserTrips } from "../../stores/userStore";
 import { startLoading, stopLoading } from "../../stores/loaderStore";
 import { getAllTrips } from "../../stores/tripStore";
 
 export const SignInPage = () => {
+
+    const navigate = useNavigate();
 
     const [email, setEmail] = createSignal("");
     const [password, setPassword] = createSignal("");
@@ -42,6 +44,21 @@ export const SignInPage = () => {
             });
 
             if (result?.status === 'error') {
+                console.log('🔍 Checking if user is from Bubble...');
+                const bubbleCheck = await getUserFromDatabaseWithEmail(email());
+
+                if (bubbleCheck.success && bubbleCheck.data && bubbleCheck.data.isFromBubble) {
+                    console.log('✅ User is from Bubble, redirecting to registration...');
+                    stopLoading();
+                    navigate("/inscription", {
+                        state: {
+                            fromBubble: true,
+                            email: email()
+                        }
+                    });
+                    return;
+                }
+
                 setError(`Connexion échouée: ${result.error.humanReadableMessage}`);
                 stopLoading();
                 return;
@@ -55,7 +72,7 @@ export const SignInPage = () => {
             }
 
             const dbUser = await getUserFromDatabase(neonUser.id);
-            
+
             if (dbUser.success && dbUser.data) {
                 setUserProfile({
                     id: dbUser.data.id,
@@ -81,8 +98,8 @@ export const SignInPage = () => {
 
             login();
             stopLoading();
-            window.location.href = "/voyage"; 
-            
+            window.location.href = "/voyage";
+
         } catch (err) {
             setError("Erreur de connexion au serveur");
             stopLoading();
@@ -120,8 +137,8 @@ export const SignInPage = () => {
                         <div>
                             <div class="relative">
                                 <div class="flex items-center justify-between mb-3">
-                                <label class="block text-color-dark font-semibold text-lg">Mot de passe</label>
-                            </div>
+                                    <label class="block text-color-dark font-semibold text-lg">Mot de passe</label>
+                                </div>
                                 <input
                                     type={showPassword() ? "text" : "password"}
                                     value={password()}
