@@ -137,41 +137,16 @@ export const ContinueSignUp = () => {
         let stackAuthUserId: string | null = null;
 
         try {
-            console.log('🔍 STEP 1: Checking if user exists in Panjéa DB');
-            console.log('Email:', registerInfos.email);
 
             const bubbleCheck = await getUserFromDatabaseWithEmail(registerInfos.email);
-            console.log('📊 Bubble check result:', {
-                success: bubbleCheck.success,
-                hasData: !!bubbleCheck.data,
-                isFromBubble: bubbleCheck.data?.isFromBubble,
-                userId: bubbleCheck.data?.id
-            });
 
             if (bubbleCheck.success && bubbleCheck.data && bubbleCheck.data.isFromBubble) {
-                console.log('🧹 STEP 2: User is from Bubble, cleaning Stack Auth...');
-
-                const backendUrl = import.meta.env.VITE_BACKEND_URL;
-                const cleanupResponse = await fetch(`${backendUrl}/stack-auth/force-delete-by-email`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({email: registerInfos.email}),
-                });
-                console.log('🧹 Stack Auth cleanup status:', cleanupResponse.status);
                 await new Promise(resolve => setTimeout(resolve, 2000));
-                console.log('⏰ Waited 2s after cleanup');
             }
 
-            console.log('🚀 STEP 3: Creating Stack Auth account...');
             const result = await neonApp?.signUpWithCredential({
                 email: registerInfos.email,
                 password: registerInfos.password,
-            });
-
-            console.log('📝 Stack Auth signup result:', {
-                status: result?.status,
-                hasError: result?.status === 'error',
-                errorMessage: result?.status === 'error' ? result.error.humanReadableMessage : null
             });
 
             if (result?.status === 'error') {
@@ -181,13 +156,8 @@ export const ContinueSignUp = () => {
                 return;
             }
 
-            console.log('✅ Stack Auth signup successful');
 
             const neonUser = await neonApp?.getUser();
-            console.log('👤 Retrieved Stack Auth user:', {
-                id: neonUser?.id,
-                email: neonUser?.primaryEmail
-            });
 
             if (!neonUser?.id) {
                 console.error('❌ No user ID from Stack Auth');
@@ -199,13 +169,11 @@ export const ContinueSignUp = () => {
             stackAuthUserId = neonUser.id;
             setCanRegister(true);
             setRegisterUserId(neonUser.id);
-            console.log('🆔 Stack Auth user ID:', stackAuthUserId);
 
             const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
             if (bubbleCheck.success && bubbleCheck.data && bubbleCheck.data.isFromBubble) {
 
-                console.log('🔄 STEP 4: Migrating Bubble user...');
 
                 const migrateResponse = await fetch(`${backendUrl}/users/migrate-bubble`, {
                     method: 'POST',
@@ -236,10 +204,7 @@ export const ContinueSignUp = () => {
                     return;
                 }
 
-                console.log('✅ Bubble user migrated successfully');
             } else {
-
-                console.log('💾 STEP 4: Creating new user in Panjéa DB...');
 
                 const dbResult = await createUserInDatabase({
                     id: neonUser.id,
@@ -268,7 +233,6 @@ export const ContinueSignUp = () => {
                     return;
                 }
 
-                console.log('✅ User created successfully in Panjéa DB');
             }
 
             console.log('🔐 STEP 5: Signing in...');
@@ -288,9 +252,6 @@ export const ContinueSignUp = () => {
                 stopLoading();
                 return;
             }
-
-            console.log('✅ Sign in successful');
-            console.log('📥 STEP 6: Fetching user profile...');
 
             const dbUser = await getUserFromDatabase(neonUser.id);
             console.log('📥 User profile result:', {
@@ -318,14 +279,11 @@ export const ContinueSignUp = () => {
                 const userTrips = await getUserTripsFromDatabase(dbUser.data.id);
                 if (userTrips.success && userTrips.data) {
                     setUserTrips(userTrips.data);
-                    console.log('✅ User trips loaded:', userTrips.data.length);
                 }
             }
 
-            console.log('🌍 Loading all trips...');
             await getAllTrips();
 
-            console.log('✅ REGISTRATION COMPLETE!');
             login();
             stopLoading();
             navigate("/inscription/photo", {replace: true});
@@ -339,7 +297,6 @@ export const ContinueSignUp = () => {
             });
 
             if (stackAuthUserId) {
-                console.log('🔄 Rolling back Stack Auth user...');
                 try {
                     // @ts-expect-error Stack Auth signOut exists but not in types
                     await neonApp?.signOut();
@@ -347,7 +304,6 @@ export const ContinueSignUp = () => {
                     await fetch(`${backendUrl}/stack-auth/delete-user/${stackAuthUserId}`, {
                         method: 'DELETE',
                     });
-                    console.log('✅ Rollback completed');
                 } catch (rollbackErr) {
                     console.error('❌ Rollback failed:', rollbackErr);
                 }

@@ -21,10 +21,6 @@ export const ProfilePage = () => {
     const [ageError, setAgeError] = createSignal("");
 
     onMount(() => {
-        if(!user.isConnected){
-            navigate("/", { replace: true });
-            return;
-        }
 
         const verification = searchParams.verification;
         
@@ -55,6 +51,10 @@ export const ProfilePage = () => {
                 setSearchParams({ verification: undefined });
                 setVerificationMessage(null);
             }, 5000);
+        }  else if(!user.isConnected){
+            navigate("/", { replace: true });
+            console.log("not connected");
+            return;
         }
     });
 
@@ -71,7 +71,13 @@ export const ProfilePage = () => {
     const [editTravelTypes, setEditTravelTypes] = createSignal<string[]>([]);
 
     createEffect(() => {
-                if (!user.isConnected) {
+
+                const verification = searchParams.verification;
+                if (verification === 'success') {
+                    console.log("est vérifié",verification);
+                    return;
+                }  else if (!user.isConnected) {
+                    console.log("not connected");
                     navigate("/inscription", { replace: true });
                 }
     });
