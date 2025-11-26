@@ -32,7 +32,7 @@ export const ProfilePage = () => {
             setTimeout(() => {
                 setSearchParams({ verification: undefined });
                 setVerificationMessage(null);
-            }, 5000);
+            }, 10000);
         } else if (verification === 'expired') {
             setVerificationMessage({
                 text: '❌ Le lien de vérification a expiré',
