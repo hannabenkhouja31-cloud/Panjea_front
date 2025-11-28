@@ -15,91 +15,91 @@ export const ProfileTrips = (props: ProfileTripsProps) => {
         <Show
             when={props.trips.length > 0}
             fallback={
-                <div class="text-center py-12">
-                    <svg class="w-20 h-20 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="text-center py-8 sm:py-12">
+                    <svg class="w-16 h-16 sm:w-20 sm:h-20 mx-auto text-gray-300 mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">Aucun voyage pour le moment</h3>
-                    <p class="text-gray-500">Les voyages apparaîtront ici</p>
+                    <h3 class="text-lg sm:text-xl font-semibold text-gray-700 mb-2">Aucun voyage pour le moment</h3>
+                    <p class="text-sm sm:text-base text-gray-500">Les voyages apparaîtront ici</p>
                 </div>
             }
         >
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <For each={props.trips}>
                     {(tripItem) => (
-                        <A 
-                            href={`/voyage/${tripItem.id}`} 
-                            class="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer"
+                        <A
+                            href={`/voyage/${tripItem.id}`}
+                            class="group bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer"
                         >
-                            <div class="relative h-52 overflow-hidden">
-                                <img 
+                            <div class="relative h-40 sm:h-52 overflow-hidden">
+                                <img
                                     src={getFirstTripImage(tripItem)}
-                                    alt={tripItem.title} 
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                                    alt={tripItem.title}
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                 />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-                                
-                                <div class="absolute top-4 left-4 right-4 flex items-start justify-between gap-2">
-                                    <div class="bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-2">
-                                        <Calendar size={14} class="text-color-main" />
-                                        <span class="text-xs font-semibold text-color-dark">{formatDateRange(tripItem.monthYear)}</span>
+
+                                <div class="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 flex items-start justify-between gap-2">
+                                    <div class="bg-white/95 backdrop-blur-sm px-2 py-1 sm:px-3 sm:py-1.5 rounded-full flex items-center gap-1.5 sm:gap-2">
+                                        <Calendar size={12} class="sm:w-[14px] sm:h-[14px] text-color-main" />
+                                        <span class="text-[10px] sm:text-xs font-semibold text-color-dark">{formatDateRange(tripItem.monthYear)}</span>
                                     </div>
-                                    <div class="bg-color-secondary/95 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                                        <span class="text-xs font-bold text-white">
-                                            {tripItem.minDays === tripItem.maxDays 
-                                                ? `${tripItem.minDays}j` 
+                                    <div class="bg-color-secondary/95 backdrop-blur-sm px-2 py-1 sm:px-3 sm:py-1.5 rounded-full">
+                                        <span class="text-[10px] sm:text-xs font-bold text-white">
+                                            {tripItem.minDays === tripItem.maxDays
+                                                ? `${tripItem.minDays}j`
                                                 : `${tripItem.minDays}-${tripItem.maxDays}j`}
                                         </span>
                                     </div>
                                 </div>
-                                
-                                <div class="absolute bottom-4 left-4 right-4">
-                                    <div class="flex items-start gap-2 mb-2">
-                                        <MapPin size={18} class="text-white flex-shrink-0 mt-0.5" />
-                                        <span class="text-sm font-medium text-white/90">{tripItem.destinationCountry}</span>
+
+                                <div class="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4">
+                                    <div class="flex items-start gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                                        <MapPin size={16} class="sm:w-[18px] sm:h-[18px] text-white flex-shrink-0 mt-0.5" />
+                                        <span class="text-xs sm:text-sm font-medium text-white/90">{tripItem.destinationCountry}</span>
                                     </div>
-                                    <h3 class="text-xl font-bold text-white drop-shadow-lg line-clamp-2 truncate">{tripItem.title}</h3>
+                                    <h3 class="text-lg sm:text-xl font-bold text-white drop-shadow-lg line-clamp-2 truncate">{tripItem.title}</h3>
                                 </div>
                             </div>
 
-                            <div class="p-5">
-                                <div class="space-y-3 mb-4">
+                            <div class="p-3 sm:p-5">
+                                <div class="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2">
-                                            <Wallet size={18} class="text-color-secondary" />
-                                            <span class="text-sm text-gray-600">Budget</span>
+                                        <div class="flex items-center gap-1.5 sm:gap-2">
+                                            <Wallet size={16} class="sm:w-[18px] sm:h-[18px] text-color-secondary" />
+                                            <span class="text-xs sm:text-sm text-gray-600">Budget</span>
                                         </div>
-                                        <span class="text-base font-bold text-color-main">{formatBudget(tripItem.budgetEur)}</span>
+                                        <span class="text-sm sm:text-base font-bold text-color-main">{formatBudget(tripItem.budgetEur)}</span>
                                     </div>
 
                                     <Show when={tripItem.minAge || tripItem.maxAge}>
                                         <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2">
-                                                <Users size={18} class="text-color-main" />
-                                                <span class="text-sm text-gray-600">Âges</span>
+                                            <div class="flex items-center gap-1.5 sm:gap-2">
+                                                <Users size={16} class="sm:w-[18px] sm:h-[18px] text-color-main" />
+                                                <span class="text-xs sm:text-sm text-gray-600">Âges</span>
                                             </div>
-                                            <span class="text-sm font-semibold text-color-dark">
-                                                {tripItem.minAge && tripItem.maxAge 
+                                            <span class="text-xs sm:text-sm font-semibold text-color-dark">
+                                                {tripItem.minAge && tripItem.maxAge
                                                     ? `${tripItem.minAge}-${tripItem.maxAge} ans`
-                                                    : tripItem.minAge 
-                                                    ? `${tripItem.minAge}+ ans`
-                                                    : `${tripItem.maxAge} ans max`}
+                                                    : tripItem.minAge
+                                                        ? `${tripItem.minAge}+ ans`
+                                                        : `${tripItem.maxAge} ans max`}
                                             </span>
                                         </div>
                                     </Show>
                                 </div>
 
                                 <Show when={(tripItem as any).travelTypes?.length > 0}>
-                                    <div class="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+                                    <div class="flex flex-wrap gap-1.5 sm:gap-2 pt-2 sm:pt-3 border-t border-gray-100">
                                         <For each={(tripItem as any).travelTypes?.slice(0, 3)}>
                                             {(slug: string) => (
-                                                <span class="px-3 py-1 bg-color-light text-color-main text-xs rounded-full font-medium">
+                                                <span class="px-2 py-0.5 sm:px-3 sm:py-1 bg-color-light text-color-main text-[10px] sm:text-xs rounded-full font-medium">
                                                     {getTravelTypeLabel(slug)}
                                                 </span>
                                             )}
                                         </For>
                                         <Show when={(tripItem as any).travelTypes?.length > 3}>
-                                            <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
+                                            <span class="px-2 py-0.5 sm:px-3 sm:py-1 bg-gray-100 text-gray-600 text-[10px] sm:text-xs rounded-full font-medium">
                                                 +{(tripItem as any).travelTypes.length - 3}
                                             </span>
                                         </Show>

@@ -17,12 +17,12 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
     const { startUpload } = createUploadThing("profilePicture", {
         onClientUploadComplete: async (res) => {
             const uploadedUrl = res[0].ufsUrl;
-            
+
             const result = await updateProfilePicture(uploadedUrl);
-            
+
             if (!result.success) {
                 setUploadError("Erreur lors de la sauvegarde de la photo");
-                
+
                 try {
                     await fetch(`${backendUrl}/api/uploadthing`, {
                         method: 'DELETE',
@@ -35,7 +35,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
             } else {
                 setUploadError(null);
             }
-            
+
             setIsUploading(false);
         },
         onUploadError: (error) => {
@@ -55,14 +55,14 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
     const handleFileSelect = async (e: Event) => {
         const input = e.target as HTMLInputElement;
         const files = input.files;
-        
+
         if (files && files.length > 0) {
             setIsUploading(true);
             setUploadError(null);
 
             if (props.profile?.profilePictureUrl) {
                 const currentUrl = props.profile.profilePictureUrl;
-                
+
                 try {
                     await fetch(`${backendUrl}/api/uploadthing`, {
                         method: 'DELETE',
@@ -73,7 +73,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
                     console.error("Erreur lors de la suppression sur UploadThing:", error);
                 }
             }
-            
+
             await startUpload(Array.from(files));
         }
     };
@@ -88,35 +88,35 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
     };
 
     return (
-        <div class="flex flex-col items-center gap-3">
+        <div class="flex flex-col items-center gap-2 sm:gap-3">
             <div class="relative">
                 <div class="avatar avatar-placeholder">
-                    <Show 
+                    <Show
                         when={props.profile?.profilePictureUrl}
                         fallback={
-                            <div class="bg-neutral text-neutral-content w-24 rounded-full">
-                                <span class="text-4xl">
+                            <div class="bg-neutral text-neutral-content w-16 sm:w-24 rounded-full">
+                                <span class="text-2xl sm:text-4xl">
                                     {props.profile?.username?.[0]?.toUpperCase() || "P"}
                                 </span>
                             </div>
                         }
                     >
-                        <div class="w-24 rounded-full">
+                        <div class="w-16 sm:w-24 rounded-full">
                             <img src={props.profile?.profilePictureUrl} alt={props.profile?.username} />
                         </div>
                     </Show>
                 </div>
 
                 <Show when={props.isEditing}>
-                    <label 
-                        class="absolute bottom-0 right-0 bg-color-main text-white p-2 rounded-full cursor-pointer hover:scale-110 transition-all duration-200 shadow-lg"
+                    <label
+                        class="absolute bottom-0 right-0 bg-color-main text-white p-1.5 sm:p-2 rounded-full cursor-pointer hover:scale-110 transition-all duration-200 shadow-lg"
                         classList={{ "opacity-50 cursor-wait": isUploading() }}
                     >
-                        <Camera size={18} />
-                        <input 
-                            type="file" 
-                            accept="image/*" 
-                            class="hidden" 
+                        <Camera size={14} class="sm:w-[18px] sm:h-[18px]" />
+                        <input
+                            type="file"
+                            accept="image/*"
+                            class="hidden"
                             onChange={handleFileSelect}
                             disabled={isUploading()}
                         />
@@ -125,24 +125,24 @@ export const ProfileAvatar = (props: ProfileAvatarProps) => {
                     <Show when={props.profile?.profilePictureUrl}>
                         <button
                             onClick={handleDeletePhoto}
-                            class="absolute top-0 right-0 bg-red-500 text-white p-1.5 rounded-full cursor-pointer hover:scale-110 transition-all duration-200 shadow-lg"
+                            class="absolute top-0 right-0 bg-red-500 text-white p-1 sm:p-1.5 rounded-full cursor-pointer hover:scale-110 transition-all duration-200 shadow-lg"
                             title="Supprimer la photo"
                         >
-                            <X size={14} />
+                            <X size={12} class="sm:w-[14px] sm:h-[14px]" />
                         </button>
                     </Show>
                 </Show>
 
                 <Show when={isUploading()}>
                     <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
-                        <span class="loading loading-spinner loading-md text-white"></span>
+                        <span class="loading loading-spinner loading-sm sm:loading-md text-white"></span>
                     </div>
                 </Show>
             </div>
 
             <Show when={uploadError()}>
                 <div class="max-w-xs">
-                    <p class="text-red-500 text-sm font-medium text-center">{uploadError()}</p>
+                    <p class="text-red-500 text-xs sm:text-sm font-medium text-center">{uploadError()}</p>
                 </div>
             </Show>
         </div>

@@ -11,7 +11,7 @@ export const HomePage = () => {
                     <h1 class="mt-10 sm:mt-0 font-bold text-3xl sm:text-4xl md:text-5xl text-center px-4">Réinventons le voyage entre femmes.</h1>
                     <h2 class="mt-4 font-medium text-lg sm:text-xl md:text-2xl lg:text-3xl max-w-[776px] text-center mx-auto px-4">Décide de comment voyager et avec qui partager des moments uniques en toute sérénité</h2>
                     <Show when={!user.isConnected} fallback={<>
-                        <A href="/voyage" class="cursor-pointer mt-6 md:mt-8 btn-secondary text-lg md:text-xl">Rejoins notre communauté</A>
+                        <A href="/voyage" class="cursor-pointer mt-6 md:mt-8 btn-secondary text-lg md:text-xl text-center">Rejoins notre communauté</A>
                     </>}>
                         <A href="/inscription" class="cursor-pointer mt-6 md:mt-8 btn-secondary text-lg md:text-xl">Rejoins notre communauté</A>
                     </Show>

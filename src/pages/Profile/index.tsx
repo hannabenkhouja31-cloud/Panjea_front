@@ -14,7 +14,7 @@ import { ProfileModals } from "./ProfileModals";
 export const ProfilePage = () => {
 
     const navigate = useNavigate();
-    
+
     const [searchParams, setSearchParams] = useSearchParams();
     const [editAge, setEditAge] = createSignal<number | undefined>(undefined);
     const [verificationMessage, setVerificationMessage] = createSignal<{text: string, type: 'success' | 'error'} | null>(null);
@@ -23,7 +23,7 @@ export const ProfilePage = () => {
     onMount(() => {
 
         const verification = searchParams.verification;
-        
+
         if (verification === 'success') {
             setVerificationMessage({
                 text: '✅ Ton email a été vérifié avec succès !',
@@ -72,14 +72,14 @@ export const ProfilePage = () => {
 
     createEffect(() => {
 
-                const verification = searchParams.verification;
-                if (verification === 'success') {
-                    console.log("est vérifié",verification);
-                    return;
-                }  else if (!user.isConnected) {
-                    console.log("not connected");
-                    navigate("/inscription", { replace: true });
-                }
+        const verification = searchParams.verification;
+        if (verification === 'success') {
+            console.log("est vérifié",verification);
+            return;
+        }  else if (!user.isConnected) {
+            console.log("not connected");
+            navigate("/inscription", { replace: true });
+        }
     });
 
     createEffect(() => {
@@ -114,7 +114,7 @@ export const ProfilePage = () => {
 
     const travelTypes = () => {
         if (!backend.travelTypes || !user.profile?.travelTypes) return [];
-        return backend.travelTypes.filter(tt => 
+        return backend.travelTypes.filter(tt =>
             user.profile?.travelTypes.includes(tt.slug as any)
         );
     };
@@ -122,11 +122,11 @@ export const ProfilePage = () => {
     const addLanguage = (e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         const availableLanguages = SUPPORTED_LANGUAGES.filter(
             lang => !editLanguages().includes(lang as LanguageCode)
         );
-        
+
         if (availableLanguages.length > 0) {
             const currentLangs = editLanguages();
             setEditLanguages([...currentLangs, null as any]);
@@ -137,7 +137,7 @@ export const ProfilePage = () => {
     const removeLanguage = (e: MouseEvent, index: number) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         if (editLanguages().length > 1) {
             const newLanguages = editLanguages().filter((_, i) => i !== index);
             setEditLanguages(newLanguages);
@@ -201,9 +201,9 @@ export const ProfilePage = () => {
             country: editCountry(),
             age: editAge()
         };
-        
+
         const result = await updateProfile(updateData);
-        
+
         if (result.success) {
             setIsEditing(false);
             setHasChanges(false);
@@ -224,7 +224,7 @@ export const ProfilePage = () => {
 
     const confirmDelete = async () => {
         const result = await deleteAccount();
-        
+
         if (result.success) {
             navigate("/", { replace: true });
         } else {
@@ -234,18 +234,18 @@ export const ProfilePage = () => {
 
     return (
         <div class="flex-1 bg-color-light">
-            <div class="container-app py-12">
+            <div class="container-app py-6 sm:py-12">
                 <Show when={verificationMessage()}>
-                    <div class={`mb-6 p-4 rounded-xl font-semibold text-center ${
-                        verificationMessage()?.type === 'success' 
-                            ? 'bg-green-50 border border-green-200 text-green-700' 
+                    <div class={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl font-semibold text-center text-sm sm:text-base ${
+                        verificationMessage()?.type === 'success'
+                            ? 'bg-green-50 border border-green-200 text-green-700'
                             : 'bg-red-50 border border-red-200 text-red-600'
                     }`}>
                         {verificationMessage()?.text}
                     </div>
                 </Show>
 
-                <ProfileHeader 
+                <ProfileHeader
                     profile={user.profile}
                     activeTab={activeTab()}
                     isEditing={isEditing()}
@@ -253,13 +253,13 @@ export const ProfilePage = () => {
                     onCancel={cancelEdit}
                 />
 
-                <div class="bg-white rounded-2xl shadow-sm">
+                <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm">
                     <div class="flex border-b border-gray-200">
                         <button
                             onClick={() => setActiveTab("about")}
-                            class={`flex-1 py-4 px-6 text-center font-semibold ${
+                            class={`flex-1 py-3 sm:py-4 px-2 sm:px-6 text-center font-semibold text-sm sm:text-base ${
                                 activeTab() === "about"
-                                    ? "text-color-main border-b-3"
+                                    ? "text-color-main border-b-2 sm:border-b-3"
                                     : "text-gray-500 hover:text-gray-700"
                             }`}
                         >
@@ -267,9 +267,9 @@ export const ProfilePage = () => {
                         </button>
                         <button
                             onClick={() => setActiveTab("trips")}
-                            class={`flex-1 py-4 px-6 text-center font-semibold ${
+                            class={`flex-1 py-3 sm:py-4 px-2 sm:px-6 text-center font-semibold text-sm sm:text-base ${
                                 activeTab() === "trips"
-                                    ? "text-color-main border-b-3"
+                                    ? "text-color-main border-b-2 sm:border-b-3"
                                     : "text-gray-500 hover:text-gray-700"
                             }`}
                         >
@@ -277,10 +277,10 @@ export const ProfilePage = () => {
                         </button>
                     </div>
 
-                    <div class="p-8">
+                    <div class="p-4 sm:p-8">
                         <Show when={activeTab() === "about"}>
-                            <div class="space-y-12">
-                                <ProfilePersonalInfo 
+                            <div class="space-y-8 sm:space-y-12">
+                                <ProfilePersonalInfo
                                     profile={user.profile}
                                     isEditing={isEditing()}
                                     editDescription={editDescription()}
@@ -294,10 +294,10 @@ export const ProfilePage = () => {
                                 />
 
                                 <div class="flex justify-center">
-                                    <div class="w-10/12 h-[1px] bg-gray-200"></div>
+                                    <div class="w-full sm:w-10/12 h-[1px] bg-gray-200"></div>
                                 </div>
 
-                                <ProfileTravelTypes 
+                                <ProfileTravelTypes
                                     profile={user.profile}
                                     isEditing={isEditing()}
                                     editTravelTypes={editTravelTypes()}
@@ -307,10 +307,10 @@ export const ProfilePage = () => {
                                 />
 
                                 <div class="flex justify-center">
-                                    <div class="w-10/12 h-[1px] bg-gray-200"></div>
+                                    <div class="w-full sm:w-10/12 h-[1px] bg-gray-200"></div>
                                 </div>
 
-                                <ProfileBudget 
+                                <ProfileBudget
                                     profile={user.profile}
                                     isEditing={isEditing()}
                                     editBudgetLevel={editBudgetLevel() as BudgetLevel}
@@ -318,10 +318,10 @@ export const ProfilePage = () => {
                                 />
 
                                 <div class="flex justify-center">
-                                    <div class="w-10/12 h-[1px] bg-gray-200"></div>
+                                    <div class="w-full sm:w-10/12 h-[1px] bg-gray-200"></div>
                                 </div>
 
-                                <ProfileLanguages 
+                                <ProfileLanguages
                                     languages={user.profile?.languages || []}
                                     isEditing={isEditing()}
                                     editLanguages={editLanguages()}
@@ -335,34 +335,34 @@ export const ProfilePage = () => {
 
                                 <Show when={isEditing()}>
                                     <Show when={ageError()}>
-                                        <div class="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl text-base">
+                                        <div class="bg-red-50 border border-red-200 text-red-600 p-3 sm:p-4 rounded-xl text-sm sm:text-base">
                                             {ageError()}
                                         </div>
                                     </Show>
-                                    <div class="flex gap-4 pt-4">
+                                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
                                         <button
                                             onClick={cancelEdit}
-                                            class="flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-200"
+                                            class="cursor-pointer flex-1 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-200 text-sm sm:text-base"
                                         >
                                             Annuler
                                         </button>
                                         <button
                                             onClick={handleSave}
                                             disabled={!hasChanges()}
-                                            class={`flex-1 py-3 rounded-xl font-semibold transition-all duration-200 ${
-                                                hasChanges() 
-                                                    ? 'bg-color-main text-white hover:scale-105 cursor-pointer' 
+                                            class={`flex-1 py-3 rounded-xl font-semibold transition-all duration-200 text-sm sm:text-base ${
+                                                hasChanges()
+                                                    ? 'bg-color-main text-white hover:scale-105 cursor-pointer'
                                                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                             }`}
                                         >
-                                            Sauvegarder les modifications
+                                            Sauvegarder
                                         </button>
                                     </div>
 
-                                    <div class="flex justify-center items-center pt-8 border-t border-gray-200 mt-8">
+                                    <div class="flex justify-center items-center pt-6 sm:pt-8 border-t border-gray-200 mt-6 sm:mt-8">
                                         <button
                                             onClick={handleDeleteAccount}
-                                            class="text-center text-sm text-black/20 hover:text-black/40"
+                                            class="text-center text-xs sm:text-sm text-black/20 hover:text-black/40"
                                         >
                                             Supprimer mon compte
                                         </button>
@@ -378,7 +378,7 @@ export const ProfilePage = () => {
                 </div>
             </div>
 
-            <ProfileModals 
+            <ProfileModals
                 editTravelTypes={editTravelTypes()}
                 allTravelTypes={allTravelTypes()}
                 onToggleTravelType={toggleTravelType}
