@@ -26,10 +26,10 @@ export const BannedPage = () => {
 
         try {
             const response = await fetch(`${backendUrl}/users/${neonUser.id}`);
-            
+
             if (response.ok) {
                 const userData = await response.json();
-                
+
                 if (userData.isBanned) {
                     setBannedInfo({
                         reason: userData.bannedReason,
@@ -49,12 +49,12 @@ export const BannedPage = () => {
 
     const calculateRemainingDays = () => {
         if (!bannedInfo()?.bannedUntil) return null;
-        
+
         const end = new Date(bannedInfo()!.bannedUntil!);
         const now = new Date();
         const diffTime = end.getTime() - now.getTime();
         const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
+
         return days > 0 ? days : 0;
     };
 
@@ -75,12 +75,12 @@ export const BannedPage = () => {
                 }
             >
                 <div class="max-w-2xl w-full mx-4">
-                    <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <div class="bg-white rounded-2xl shadow-lg py-10 px-6 sm:p-8">
                         <div class="flex flex-col items-center text-center mb-8">
-                            <div class="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mb-6">
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-red-100 flex items-center justify-center mb-6">
                                 <Ban size={48} class="text-red-600" />
                             </div>
-                            <h1 class="text-3xl font-bold text-red-600 mb-2">
+                            <h1 class="text-2xl sm:text-3xl font-bold text-red-600 mb-2">
                                 Compte suspendu
                             </h1>
                             <p class="text-gray-600">
@@ -104,13 +104,13 @@ export const BannedPage = () => {
                                     <Calendar size={18} />
                                     <span>
                                         Suspendu le {new Date(bannedInfo()?.bannedAt!).toLocaleDateString('fr-FR', {
-                                            day: 'numeric',
-                                            month: 'long',
-                                            year: 'numeric'
-                                        })}
+                                        day: 'numeric',
+                                        month: 'long',
+                                        year: 'numeric'
+                                    })}
                                     </span>
                                 </div>
-                                
+
                                 <Show
                                     when={bannedInfo()?.bannedUntil}
                                     fallback={
@@ -124,10 +124,10 @@ export const BannedPage = () => {
                                         <Clock size={18} />
                                         <span>
                                             Fin de la suspension : {new Date(bannedInfo()!.bannedUntil!).toLocaleDateString('fr-FR', {
-                                                day: 'numeric',
-                                                month: 'long',
-                                                year: 'numeric'
-                                            })}
+                                            day: 'numeric',
+                                            month: 'long',
+                                            year: 'numeric'
+                                        })}
                                         </span>
                                     </div>
                                     <Show when={calculateRemainingDays() !== null && calculateRemainingDays()! > 0}>

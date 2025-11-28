@@ -71,10 +71,10 @@ export const SignUpPage = () => {
     return (
         <div class="py-40 flex-1 flex items-center justify-center bg-color-light">
             <div class="container-app-narrow">
-                <div class="bg-white rounded-2xl shadow-xl p-12 w-full">
+                <div class="bg-white rounded-2xl shadow-xl py-10 px-6 sm:p-12 w-full">
                     <div class="text-center mb-10">
-                        <h1 class="text-5xl font-bold text-color-dark mb-3">Créer un compte</h1>
-                        <p class="text-gray-500 text-lg">Rejoignez la communauté Panjéa</p>
+                        <h1 class="text-2xl sm:text-5xl font-bold text-color-dark mb-3">Créer un compte</h1>
+                        <p class="text-gray-500 text-base sm:text-lg">Rejoignez la communauté Panjéa</p>
                     </div>
 
                     {bubbleMessage() && (
@@ -92,25 +92,25 @@ export const SignUpPage = () => {
 
                     <form onSubmit={handleSubmit} class="space-y-6">
                         <div>
-                            <label class="block text-color-dark font-semibold mb-3 text-lg">Adresse email</label>
+                            <label class="block text-color-dark font-semibold mb-3 sm:text-lg">Adresse email</label>
                             <input
                                 type="email"
                                 value={email()}
                                 onInput={(e) => setEmail(e.target.value)}
-                                class="w-full px-5 py-4 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition"
+                                class="w-full px-2 sm:px-5 py-3 sm:py-4 text-sm sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition"
                                 placeholder="exemple@email.com"
                                 required
                             />
                         </div>
 
                         <div>
-                            <label class="block text-color-dark font-semibold mb-3 text-lg">Mot de passe</label>
+                            <label class="block text-color-dark font-semibold mb-3 sm:text-lg">Mot de passe</label>
                             <div class="relative">
                                 <input
                                     type={showPassword() ? "text" : "password"}
                                     value={password()}
                                     onInput={(e) => setPassword(e.target.value)}
-                                    class="w-full px-5 py-4 pr-12 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition"
+                                    class="w-full px-2 sm:px-5 py-3 sm:py-4 pr-12 text-sm sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition"
                                     placeholder="Minimum 8 caractères"
                                     required
                                 />
@@ -125,13 +125,13 @@ export const SignUpPage = () => {
                         </div>
 
                         <div>
-                            <label class="block text-color-dark font-semibold mb-3 text-lg">Confirmer le mot de passe</label>
+                            <label class="block text-color-dark font-semibold mb-3 sm:text-lg">Confirmer le mot de passe</label>
                             <div class="relative">
                                 <input
                                     type={showConfirmPassword() ? "text" : "password"}
                                     value={confirmPassword()}
                                     onInput={(e) => setConfirmPassword(e.target.value)}
-                                    class="w-full px-5 py-4 pr-12 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition"
+                                    class="w-full px-2 sm:px-5 py-3 sm:py-4 pr-12 text-sm sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition"
                                     placeholder="Retapez votre mot de passe"
                                     required
                                 />
@@ -147,13 +147,13 @@ export const SignUpPage = () => {
 
                         <button
                             type="submit"
-                            class="w-full bg-color-main text-white py-5 text-xl rounded-xl font-bold hover:bg-gradient-main transition-all duration-200 hover:scale-105 active:scale-95 mt-8"
+                            class="w-full bg-color-main text-white py-3 sm:py-5 text-base sm:text-xl rounded-xl font-bold hover:bg-gradient-main transition-all duration-200 hover:scale-105 active:scale-95 mt-8"
                         >
                             S'inscrire
                         </button>
                     </form>
 
-                    <p class="text-center text-base text-gray-500 mt-8">
+                    <p class="text-center text-sm sm:text-base text-gray-500 mt-8">
                         Vous avez déjà un compte ?{" "}
                         <A href="/connexion" class="text-color-main font-bold hover:underline">
                             Se connecter

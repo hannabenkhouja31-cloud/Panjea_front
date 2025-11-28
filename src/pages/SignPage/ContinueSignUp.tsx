@@ -316,11 +316,11 @@ export const ContinueSignUp = () => {
     const addLanguage = (e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         const availableLanguages = SUPPORTED_LANGUAGES.filter(
             lang => !languages().includes(lang as LanguageCode)
         );
-        
+
         if (availableLanguages.length > 0) {
             const currentLangs = languages();
             setLanguages([...currentLangs, null as any]);
@@ -331,7 +331,7 @@ export const ContinueSignUp = () => {
     const removeLanguage = (e: MouseEvent, index: number) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         if (languages().length > 1) {
             const newLanguages = languages().filter((_, i) => i !== index);
             setLanguages(newLanguages);
@@ -376,13 +376,13 @@ export const ContinueSignUp = () => {
 
     return (
         <div class="py-20 flex-1 flex items-center justify-center bg-color-light px-6">
-            <div class="bg-white rounded-2xl shadow-xl p-12 w-full max-w-2xl transform transition-all duration-300 hover:shadow-2xl">
+            <div class="bg-white rounded-2xl shadow-xl py-10 px-6 sm:p-12 w-full max-w-2xl transform transition-all duration-300 hover:shadow-2xl">
                 <div class="text-center mb-10">
-                    <h1 class="text-3xl font-bold text-color-dark mb-3 animate-fade-in">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-color-dark mb-3 animate-fade-in">
                         Complétez votre profil
                     </h1>
-                    <p class="text-gray-500 text-xl mt-4 animate-fade-in-delay">
-                        🚀 Prêt pour voyager ? 
+                    <p class="text-gray-500 text-base sm:text-xl mt-4 animate-fade-in-delay">
+                        🚀 Prêt pour voyager ?
                     </p>
                 </div>
 
@@ -400,22 +400,22 @@ export const ContinueSignUp = () => {
 
                 <form onSubmit={handleSubmit} class="space-y-6">
                     <div>
-                        <label class="block text-color-dark font-semibold mb-3 text-lg">
+                        <label class="block text-color-dark font-semibold mb-3 sm:text-lg">
                             Pseudo
                         </label>
                         <input
                             type="text"
                             value={pseudo()}
                             onInput={(e) => setPseudo(e.target.value)}
-                            class="w-full px-5 py-4 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition transform focus:scale-[1.01]"
+                            class="w-full px-2 sm:px-5 py-3 sm:py-4 text-sm sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition transform focus:scale-[1.01]"
                             placeholder="Choisissez votre pseudo"
                             required
                         />
                     </div>
 
                     <div>
-                        <label class="block text-color-dark font-semibold mb-3 text-lg">
-                            Âge <span class="text-gray-400 text-base font-normal">(optionnel)</span>
+                        <label class="block text-color-dark font-semibold mb-3 sm:text-lg">
+                            Âge <span class="text-gray-400 text-sm sm:text-base font-normal">(optionnel)</span>
                         </label>
                         <input
                             type="number"
@@ -426,7 +426,7 @@ export const ContinueSignUp = () => {
                                 const value = e.target.value;
                                 setAge(value ? Number(value) : undefined);
                             }}
-                            class="w-full px-5 py-4 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition transform focus:scale-[1.01]"
+                            class="w-full px-2 sm:px-5 py-3 sm:py-4 text-sm sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition transform focus:scale-[1.01]"
                             placeholder="Votre âge"
                         />
                         <p class="text-sm text-gray-500 mt-2">Vous devez avoir au moins 18 ans pour utiliser Panjéa</p>
@@ -434,10 +434,10 @@ export const ContinueSignUp = () => {
 
                     <div>
                         <div class="flex items-center gap-4 mb-4 flex-wrap">
-                            <label class="block text-color-dark font-semibold text-lg">
+                            <label class="block text-color-dark font-semibold sm:text-lg">
                                 Langues
                             </label>
-                            
+
                             <For each={languages()}>
                                 {(lang, index) => (
                                     <div class="flex items-center gap-1">
@@ -491,10 +491,10 @@ export const ContinueSignUp = () => {
 
                         {languages()[selectedIndex()] ? (
                             <div class="dropdown dropdown-hover w-full">
-                                <div 
-                                    tabindex="0" 
-                                    role="button" 
-                                    class="w-full px-5 py-4 text-lg border border-gray-300 rounded-xl bg-white hover:border-color-main transition cursor-pointer flex items-center gap-3"
+                                <div
+                                    tabindex="0"
+                                    role="button"
+                                    class="w-full px-2 sm:px-5 py-3 sm:py-4 text-sm sm:text-lg border border-gray-300 rounded-xl bg-white hover:border-color-main transition cursor-pointer flex items-center gap-3"
                                 >
                                     <span class={`fi fi-${LANGUAGE_TO_FLAG[languages()[selectedIndex()]]}`}></span>
                                     <span class="flex-1 text-left text-color-dark">
@@ -504,18 +504,18 @@ export const ContinueSignUp = () => {
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </div>
-                                <ul 
-                                    tabindex="0" 
+                                <ul
+                                    tabindex="0"
                                     class="dropdown-content menu bg-white rounded-xl z-10 w-full p-2 shadow-xl border border-gray-200 max-h-60 overflow-y-auto"
                                 >
                                     <For each={getAvailableLanguages(selectedIndex())}>
                                         {(lang) => (
                                             <li class="list-none">
-                                                <a 
+                                                <a
                                                     onClick={() => updateLanguage(selectedIndex(), lang as LanguageCode)}
                                                     class={`flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-color-light transition cursor-pointer text-color-dark no-underline ${
-                                                        languages()[selectedIndex()] === lang 
-                                                            ? 'bg-color-light text-color-main font-semibold' 
+                                                        languages()[selectedIndex()] === lang
+                                                            ? 'bg-color-light text-color-main font-semibold'
                                                             : ''
                                                     }`}
                                                 >
@@ -529,24 +529,24 @@ export const ContinueSignUp = () => {
                             </div>
                         ) : (
                             <div class="dropdown dropdown-hover w-full">
-                                <div 
-                                    tabindex="0" 
-                                    role="button" 
-                                    class="w-full px-5 py-4 text-lg border border-gray-300 rounded-xl bg-white hover:border-color-main transition cursor-pointer flex items-center gap-3"
+                                <div
+                                    tabindex="0"
+                                    role="button"
+                                    class="w-full px-2 sm:px-5 py-3 sm:py-4 text-sm sm:text-lg border border-gray-300 rounded-xl bg-white hover:border-color-main transition cursor-pointer flex items-center gap-3"
                                 >
                                     <span class="flex-1 text-left text-gray-400">Sélectionnez une langue</span>
                                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </div>
-                                <ul 
-                                    tabindex="0" 
+                                <ul
+                                    tabindex="0"
                                     class="dropdown-content menu bg-white rounded-xl z-10 w-full p-2 shadow-xl border border-gray-200 max-h-60 overflow-y-auto"
                                 >
                                     <For each={getAvailableLanguages(selectedIndex())}>
                                         {(lang) => (
                                             <li class="list-none">
-                                                <a 
+                                                <a
                                                     onClick={() => updateLanguage(selectedIndex(), lang as LanguageCode)}
                                                     class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-color-light transition cursor-pointer text-color-dark no-underline"
                                                 >
@@ -562,23 +562,23 @@ export const ContinueSignUp = () => {
                     </div>
 
                     <div>
-                        <label class="block text-color-dark font-semibold mb-3 text-lg">
+                        <label class="block text-color-dark font-semibold mb-3 sm:text-lg">
                             Budget voyage
                         </label>
-                        <div 
+                        <div
                             class="w-full"
                             style={{
                                 '--range-color': getRangeColor(),
                                 '--range-gradient': `linear-gradient(to right, ${getRangeColor()} 0%, ${getRangeColor()} ${((budgetLevel() - 1) / 2) * 100}%, #E5E7EB ${((budgetLevel() - 1) / 2) * 100}%, #E5E7EB 100%)`
                             }}
                         >
-                            <input 
-                                type="range" 
-                                min="1" 
-                                max="3" 
-                                value={budgetLevel()} 
+                            <input
+                                type="range"
+                                min="1"
+                                max="3"
+                                value={budgetLevel()}
                                 onInput={(e) => setBudgetLevel(Number(e.target.value))}
-                                class="budget-range w-full" 
+                                class="budget-range w-full"
                                 step="1"
                             />
                             <div class="flex justify-between mt-2">
@@ -588,19 +588,19 @@ export const ContinueSignUp = () => {
                             </div>
                             <div class="flex justify-between mt-2">
                                 <div class="flex flex-col items-start">
-                                    <span class="text-2xl font-bold mb-1" style={`color: ${budgetLevel() === 1 ? getRangeColor() : '#9CA3AF'}`}>
+                                    <span class="text-xl sm:text-2xl font-bold mb-1" style={`color: ${budgetLevel() === 1 ? getRangeColor() : '#9CA3AF'}`}>
                                         {BUDGET_SYMBOLS[1]}
                                     </span>
                                     <span class="text-xs text-gray-600">{BUDGET_LABELS[1]}</span>
                                 </div>
                                 <div class="flex flex-col items-center">
-                                    <span class="text-2xl font-bold mb-1" style={`color: ${budgetLevel() === 2 ? getRangeColor() : '#9CA3AF'}`}>
+                                    <span class="text-xl sm:text-2xl font-bold mb-1" style={`color: ${budgetLevel() === 2 ? getRangeColor() : '#9CA3AF'}`}>
                                         {BUDGET_SYMBOLS[2]}
                                     </span>
                                     <span class="text-xs text-gray-600">{BUDGET_LABELS[2]}</span>
                                 </div>
                                 <div class="flex flex-col items-end">
-                                    <span class="text-2xl font-bold mb-1" style={`color: ${budgetLevel() === 3 ? getRangeColor() : '#9CA3AF'}`}>
+                                    <span class="text-xl sm:text-2xl font-bold mb-1" style={`color: ${budgetLevel() === 3 ? getRangeColor() : '#9CA3AF'}`}>
                                         {BUDGET_SYMBOLS[3]}
                                     </span>
                                     <span class="text-xs text-gray-600">{BUDGET_LABELS[3]}</span>
@@ -610,10 +610,10 @@ export const ContinueSignUp = () => {
                     </div>
 
                     <div>
-                        <label class="block text-color-dark font-semibold mb-3 text-lg">
+                        <label class="block text-color-dark font-semibold mb-3 sm:text-lg">
                             Mon style de voyage (minimum 3)
                         </label>
-                        
+
                         {selectedTravelTypeSlugs().length > 0 && (
                             <div class="flex flex-wrap gap-2 mb-3">
                                 <For each={selectedTravelTypeSlugs()}>
@@ -641,7 +641,7 @@ export const ContinueSignUp = () => {
                         <button
                             type="button"
                             onclick={() => myModalTravel?.showModal()}
-                            class="w-full px-5 py-4 text-lg border-2 border-dashed border-gray-300 rounded-xl bg-white hover:border-color-main transition cursor-pointer flex items-center justify-center gap-2 text-gray-500 hover:text-color-main"
+                            class="w-full px-2 sm:px-5 py-3 sm:py-4 text-sm sm:text-lg border-2 border-dashed border-gray-300 rounded-xl bg-white hover:border-color-main transition cursor-pointer flex items-center justify-center gap-2 text-gray-500 hover:text-color-main"
                         >
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -652,7 +652,7 @@ export const ContinueSignUp = () => {
 
                     <button
                         type="submit"
-                        class="w-full bg-color-main text-white py-5 text-xl rounded-xl font-bold hover:bg-gradient-main transition-all duration-200 hover:scale-105 active:scale-95 mt-8"
+                        class="w-full bg-color-main text-white py-3 sm:py-5 text-base sm:text-xl rounded-xl font-bold hover:bg-gradient-main transition-all duration-200 hover:scale-105 active:scale-95 mt-8"
                     >
                         Finir l'inscription
                     </button>

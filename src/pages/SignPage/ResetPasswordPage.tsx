@@ -106,7 +106,7 @@ export const ResetPasswordPage = () => {
     return (
         <div class="py-40 flex-1 flex items-center justify-center bg-color-light">
             <div class="container-app-narrow">
-                <div class="bg-white rounded-2xl shadow-xl p-12 w-full">
+                <div class="bg-white rounded-2xl shadow-xl py-10 px-6 sm:p-12 w-full">
                     {isCheckingToken() ? (
                         <div class="text-center py-12">
                             <span class="loading loading-spinner loading-lg text-color-main"></span>
@@ -115,8 +115,8 @@ export const ResetPasswordPage = () => {
                     ) : !isValidToken() ? (
                         <>
                             <div class="text-center mb-8">
-                                <h1 class="text-4xl font-bold text-color-dark mb-3">Lien invalide</h1>
-                                <p class="text-gray-500 text-lg mb-8">{error()}</p>
+                                <h1 class="text-2xl sm:text-4xl font-bold text-color-dark mb-3">Lien invalide</h1>
+                                <p class="text-gray-500 text-base sm:text-lg mb-8">{error()}</p>
                                 <A href="/mot-de-passe-oublie" class="inline-block bg-color-main text-white px-8 py-3 rounded-xl font-semibold hover:bg-gradient-main transition">
                                     Demander un nouveau lien
                                 </A>
@@ -137,8 +137,8 @@ export const ResetPasswordPage = () => {
                             </A>
 
                             <div class="text-center mb-10">
-                                <h1 class="text-5xl font-bold text-color-dark mb-3">Nouveau mot de passe</h1>
-                                <p class="text-gray-500 text-lg">Choisis un nouveau mot de passe sécurisé</p>
+                                <h1 class="text-2xl sm:text-5xl font-bold text-color-dark mb-3">Nouveau mot de passe</h1>
+                                <p class="text-gray-500 text-base sm:text-lg">Choisis un nouveau mot de passe sécurisé</p>
                             </div>
 
                             {error() && (
@@ -149,13 +149,13 @@ export const ResetPasswordPage = () => {
 
                             <form onSubmit={handleSubmit} class="space-y-6">
                                 <div>
-                                    <label class="block text-color-dark font-semibold mb-3 text-lg">Nouveau mot de passe</label>
+                                    <label class="block text-color-dark font-semibold mb-3 sm:text-lg">Nouveau mot de passe</label>
                                     <div class="relative">
                                         <input
                                             type={showPassword() ? "text" : "password"}
                                             value={newPassword()}
                                             onInput={(e) => setNewPassword(e.target.value)}
-                                            class="w-full px-5 py-4 pr-12 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition"
+                                            class="w-full px-2 sm:px-5 py-3 sm:py-4 pr-12 text-sm sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition"
                                             placeholder="Minimum 8 caractères"
                                             required
                                             disabled={isLoading()}
@@ -171,13 +171,13 @@ export const ResetPasswordPage = () => {
                                 </div>
 
                                 <div>
-                                    <label class="block text-color-dark font-semibold mb-3 text-lg">Confirmer le mot de passe</label>
+                                    <label class="block text-color-dark font-semibold mb-3 sm:text-lg">Confirmer le mot de passe</label>
                                     <div class="relative">
                                         <input
                                             type={showConfirmPassword() ? "text" : "password"}
                                             value={confirmPassword()}
                                             onInput={(e) => setConfirmPassword(e.target.value)}
-                                            class="w-full px-5 py-4 pr-12 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition"
+                                            class="w-full px-2 sm:px-5 py-3 sm:py-4 pr-12 text-sm sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition"
                                             placeholder="Retapez votre mot de passe"
                                             required
                                             disabled={isLoading()}
@@ -194,7 +194,7 @@ export const ResetPasswordPage = () => {
 
                                 <button
                                     type="submit"
-                                    class="w-full bg-color-main text-white py-5 text-xl rounded-xl font-bold hover:bg-gradient-main transition-all duration-200 hover:scale-105 active:scale-95 mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    class="w-full bg-color-main text-white py-3 sm:py-5 text-base sm:text-xl rounded-xl font-bold hover:bg-gradient-main transition-all duration-200 hover:scale-105 active:scale-95 mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
                                     disabled={isLoading()}
                                 >
                                     {isLoading() ? "Réinitialisation..." : "Réinitialiser mon mot de passe"}
