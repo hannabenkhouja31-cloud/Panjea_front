@@ -21,10 +21,10 @@ interface TemporaryMedia {
 
 export const CreateTripPage = () => {
     const navigate = useNavigate();
-    
+
     const [currentStep, setCurrentStep] = createSignal(1);
     const [completedSteps, setCompletedSteps] = createSignal<number[]>([]);
-    
+
     const [title, setTitle] = createSignal("");
     const [destinationCountry, setDestinationCountry] = createSignal("");
     const [summary, setSummary] = createSignal("");
@@ -39,9 +39,9 @@ export const CreateTripPage = () => {
     const [maxAge, setMaxAge] = createSignal<number | undefined>(undefined);
     const [selectedTravelTypes, setSelectedTravelTypes] = createSignal<string[]>([]);
     const [temporaryMedia, setTemporaryMedia] = createSignal<TemporaryMedia[]>([]);
-    
+
     const [error, setError] = createSignal("");
-    
+
     createEffect(() => {
         if (!user.isConnected) {
             navigate("/inscription", { replace: true });
@@ -49,11 +49,11 @@ export const CreateTripPage = () => {
     });
 
     onMount(() => {
-        
+
         if (user.profile?.budgetLevel) {
             setBudgetLevel(user.profile.budgetLevel);
         }
-        
+
         if (user.profile?.travelTypes && user.profile.travelTypes.length >= 3) {
             setSelectedTravelTypes([...user.profile.travelTypes]);
         }
@@ -81,12 +81,12 @@ export const CreateTripPage = () => {
 
     const canGoToStep = (step: number): boolean => {
         if (step === 1) return true;
-        
+
         if (step === 2) return validateStep1();
         if (step === 3) return validateStep1() && validateStep2();
         if (step === 4) return validateStep1() && validateStep2() && validateStep3();
         if (step === 5) return validateStep1() && validateStep2() && validateStep3() && validateStep4();
-        
+
         return false;
     };
 
@@ -102,19 +102,20 @@ export const CreateTripPage = () => {
         if (budgetMode() === "manual" && budgetEur() !== undefined && budgetEur()! < 0) {
             return false;
         }
-        
-        if (minAge() !== undefined && (minAge()! < 18 || minAge()! > 99)) {
+
+        // Validation stricte : si une valeur est saisie, elle doit être entre 18 et 120
+        if (minAge() !== undefined && (minAge()! < 18 || minAge()! > 120)) {
             return false;
         }
-        
-        if (maxAge() !== undefined && (maxAge()! < 18 || maxAge()! > 99)) {
+
+        if (maxAge() !== undefined && (maxAge()! < 18 || maxAge()! > 120)) {
             return false;
         }
-        
+
         if (minAge() !== undefined && maxAge() !== undefined && minAge()! >= maxAge()!) {
             return false;
         }
-        
+
         return true;
     };
 
@@ -131,31 +132,31 @@ export const CreateTripPage = () => {
 
     const nextStep = () => {
         setError("");
-        
+
         if (currentStep() === 1 && !validateStep1()) {
             setError("Veuillez remplir le titre et la destination");
             return;
         }
-        
+
         if (currentStep() === 2 && !validateStep2()) {
             setError("Veuillez remplir les dates et la durée correctement");
             return;
         }
 
         if (currentStep() === 3 && !validateStep3()) {
-            setError("Valeurs invalides : vérifiez le budget et les âges (min < max, 18-99 ans)");
+            setError("Valeurs invalides : vérifiez le budget et les âges (min < max, 18-120 ans)");
             return;
         }
-        
+
         if (currentStep() === 4 && !validateStep4()) {
             setError("Veuillez sélectionner au moins 3 types de voyage");
             return;
         }
-        
+
         if (!completedSteps().includes(currentStep())) {
             setCompletedSteps([...completedSteps(), currentStep()]);
         }
-        
+
         if (currentStep() < 5) {
             setCurrentStep(currentStep() + 1);
         }
@@ -208,9 +209,9 @@ export const CreateTripPage = () => {
                 joinTripRoom(result.data.id, user.profile.id);
                 await getLastMessagesByTrips([result.data.id], user.profile.id);
             }
-            
+
             stopLoading();
-            
+
             navigate("/voyage?refresh=true");
         } else {
             setError(result.error || "Erreur lors de la création du voyage");
@@ -219,7 +220,7 @@ export const CreateTripPage = () => {
     };
 
     return (
-        <div class="container-app-narrow pb-16 pt-24 flex-1 min-h-screen bg-color-light">
+        <div class="container-app-narrow pb-6 pt-20 sm:pb-16 sm:pt-24 flex-1 min-h-screen bg-color-light">
             <div class="max-w-4xl mx-auto">
                 <CreateTripStepper
                     currentStep={currentStep()}
@@ -228,14 +229,14 @@ export const CreateTripPage = () => {
                     goToStep={goToStep}
                 />
 
-                <div class="bg-white rounded-2xl shadow-xl mb-6 min-h-[60vh] flex flex-col">
+                <div class="bg-white rounded-xl sm:rounded-2xl shadow-xl mb-4 sm:mb-6 min-h-[50vh] sm:min-h-[60vh] flex flex-col p-4 sm:p-0">
                     {error() && (
-                        <div class="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl mb-6 text-center animate-shake">
+                        <div class="bg-red-50 border border-red-200 text-red-600 p-3 sm:p-4 rounded-xl mb-4 sm:mb-6 text-center text-sm sm:text-base animate-shake">
                             {error()}
                         </div>
                     )}
 
-                    <div class="flex-1 flex overflow-y-auto justify-center items-center w-full ">
+                    <div class="flex-1 flex overflow-y-auto justify-center items-center w-full">
                         {currentStep() === 1 && (
                             <CreateTripStep1
                                 currentStep={currentStep()}
@@ -284,8 +285,8 @@ export const CreateTripPage = () => {
                             />
                         )}
                         {currentStep() === 5 && (
-                            <CreateTripStep5 
-                                currentStep={currentStep()} 
+                            <CreateTripStep5
+                                currentStep={currentStep()}
                                 temporaryMedia={temporaryMedia()}
                                 setTemporaryMedia={setTemporaryMedia}
                             />
@@ -293,11 +294,11 @@ export const CreateTripPage = () => {
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-3 sm:gap-4">
                     <button
                         onClick={previousStep}
                         disabled={currentStep() === 1}
-                        class={`w-full py-5 rounded-xl font-bold text-lg transition-all ${
+                        class={`w-full py-3 sm:py-5 rounded-xl font-bold text-base sm:text-lg transition-all ${
                             currentStep() === 1
                                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                 : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:scale-[1.02]'
@@ -309,16 +310,16 @@ export const CreateTripPage = () => {
                     {currentStep() < 5 ? (
                         <button
                             onClick={nextStep}
-                            class="w-full py-5 rounded-xl font-bold text-lg bg-color-secondary text-white hover:scale-[1.02] transition-all"
+                            class="w-full py-3 sm:py-5 rounded-xl font-bold text-base sm:text-lg bg-color-secondary text-white hover:scale-[1.02] transition-all"
                         >
                             Suivant
                         </button>
                     ) : (
                         <button
                             onClick={handleSubmit}
-                            class="w-full py-5 rounded-xl font-bold text-lg bg-color-main text-white hover:bg-gradient-main hover:scale-[1.02] transition-all"
+                            class="w-full py-3 sm:py-5 rounded-xl font-bold text-base sm:text-lg bg-color-main text-white hover:bg-gradient-main hover:scale-[1.02] transition-all"
                         >
-                            Créer le voyage
+                            Créer
                         </button>
                     )}
                 </div>

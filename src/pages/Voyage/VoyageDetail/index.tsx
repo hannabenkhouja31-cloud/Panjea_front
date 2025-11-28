@@ -23,12 +23,12 @@ import { TripImages } from "./TripImages";
 import { useNavigate } from "@solidjs/router";
 
 export const VoyageDetailPage = () => {
-    
+
     const navigate = useNavigate();
     let editTripTravelTypesModal: HTMLDialogElement | undefined;
-    
+
     const [activeTab, setActiveTab] = createSignal<'members' | 'pending'>('members');
-    
+
     const {
         isLoading,
         organizer,
@@ -67,7 +67,7 @@ export const VoyageDetailPage = () => {
         handleSave: saveEditChanges,
         startDateInput,
         endDateInput,
-    } = useTripEdit(); 
+    } = useTripEdit();
 
     const {
         uploadError,
@@ -80,7 +80,7 @@ export const VoyageDetailPage = () => {
         moveMediaRight,
         saveMediaChanges,
         temporaryEditMedia,
-        hasMediaChanges 
+        hasMediaChanges
     } = useTripMedia(isEditing);
 
     createEffect(() => {
@@ -115,7 +115,7 @@ export const VoyageDetailPage = () => {
 
     createEffect(() => {
         if (isLoading()) return;
-        
+
         const org = organizer();
 
         if (!org || org.isDeleted) {
@@ -154,11 +154,11 @@ export const VoyageDetailPage = () => {
 
         const temporaryIds = temporaryEditMedia().map(m => String(m.id));
         const saveSuccess = await saveEditChanges(temporaryIds);
-    
+
         if (saveSuccess && trip.currentTrip?.id) {
 
             await getTripById(trip.currentTrip.id);
-            
+
             await getAllTrips(1, false);
         }
     };
@@ -182,10 +182,10 @@ export const VoyageDetailPage = () => {
             }
         >
             <Show when={trip.currentTrip}>
-                <div class="pt-16 pb-16 bg-color-light min-h-screen container-app">
-                    <div class="container-app-wide py-8">
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            <div class="lg:col-span-2 space-y-6">
+                <div class="pt-20 pb-20 sm:pt-24 bg-color-light min-h-screen container-app">
+                    <div class="container-app-wide py-4 sm:py-8">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
+                            <div class="lg:col-span-2 space-y-4 sm:space-y-6">
                                 <TripImages />
 
                                 <TripHeader
@@ -228,7 +228,7 @@ export const VoyageDetailPage = () => {
                                     onFileSelect={handleFileSelectEdit}
                                     onMoveLeft={moveMediaLeft}
                                     onMoveRight={moveMediaRight}
-                                    onRemove={(mediaId, isTemporary) => 
+                                    onRemove={(mediaId, isTemporary) =>
                                         isTemporary ? handleRemoveTemporaryMedia(mediaId) : handleRemoveExistingMedia(mediaId)
                                     }
                                 />
@@ -240,22 +240,22 @@ export const VoyageDetailPage = () => {
                                     activeTab={activeTab}
                                     setActiveTab={setActiveTab}
                                     onAcceptMember={(userId) => handleAcceptMember(
-                                        userId, 
-                                        trip.currentTrip!.id, 
-                                        user.profile!.id, 
-                                        loadTripMembers, 
+                                        userId,
+                                        trip.currentTrip!.id,
+                                        user.profile!.id,
+                                        loadTripMembers,
                                         loadPendingRequests
                                     )}
                                     onDeclineMember={(userId) => handleDeclineMember(
-                                        userId, 
-                                        trip.currentTrip!.id, 
-                                        user.profile!.id, 
+                                        userId,
+                                        trip.currentTrip!.id,
+                                        user.profile!.id,
                                         loadPendingRequests
                                     )}
                                 />
                             </div>
 
-                            <div class="lg:col-span-1 space-y-6">
+                            <div class="lg:col-span-1 space-y-4 sm:space-y-6">
                                 <TripSummary
                                     trip={trip.currentTrip}
                                     isEditing={isEditing()}

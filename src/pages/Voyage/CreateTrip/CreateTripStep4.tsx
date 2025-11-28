@@ -11,26 +11,26 @@ interface CreateTripStep4Props {
 export const CreateTripStep4 = (props: CreateTripStep4Props) => {
     return (
         <div class="w-full max-w-2xl mx-auto">
-            <div class="flex items-center justify-between mb-8">
-                <div class="flex items-center gap-3">
-                    <Compass size={32} class="text-color-success" />
-                    <h3 class="text-2xl font-bold text-color-dark">Types de voyage</h3>
+            <div class="flex items-center justify-between mb-4 sm:mb-8">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <Compass class="w-6 h-6 sm:w-8 sm:h-8 text-color-success" />
+                    <h3 class="text-xl sm:text-2xl font-bold text-color-dark">Types de voyage</h3>
                 </div>
-                <span class="text-gray-500 font-medium">Étape {props.currentStep}/5</span>
+                <span class="text-sm sm:text-base text-gray-500 font-medium">Étape {props.currentStep}/5</span>
             </div>
-            
+
             <div>
-                <p class="text-center text-gray-600 mb-6 text-lg">
+                <p class="text-center text-gray-600 mb-4 sm:mb-6 text-base sm:text-lg">
                     Sélectionnez au moins 3 types de voyage qui correspondent à votre aventure
                 </p>
 
                 {props.selectedTravelTypes.length > 0 && (
-                    <div class="flex flex-wrap gap-2 mb-6 justify-center">
+                    <div class="flex flex-wrap gap-2 mb-4 sm:mb-6 justify-center">
                         <For each={props.selectedTravelTypes}>
                             {(slug) => {
                                 const tt = props.travelTypes.find(t => t.slug === slug);
                                 return (
-                                    <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-color-secondary text-white text-sm font-medium">
+                                    <div class="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-color-secondary text-white text-xs sm:text-sm font-medium">
                                         <span>{tt?.label}</span>
                                         <button
                                             type="button"
@@ -54,9 +54,9 @@ export const CreateTripStep4 = (props: CreateTripStep4Props) => {
                         const modal = document.getElementById('trip_travel_types_modal') as HTMLDialogElement;
                         modal?.showModal();
                     }}
-                    class="w-full px-5 py-6 text-lg border-2 border-dashed border-gray-300 rounded-xl bg-white hover:border-color-main transition cursor-pointer flex items-center justify-center gap-2 text-gray-500 hover:text-color-main"
+                    class="w-full px-4 py-4 sm:px-5 sm:py-6 text-base sm:text-lg border-2 border-dashed border-gray-300 rounded-xl bg-white hover:border-color-main transition cursor-pointer flex items-center justify-center gap-2 text-gray-500 hover:text-color-main"
                 >
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
                     <span>Choisir vos types de voyage</span>

@@ -15,28 +15,28 @@ interface TripPhotosProps {
 
 export const TripPhotos = (props: TripPhotosProps) => {
     return (
-        <div class="bg-white rounded-2xl shadow-md p-6">
-            <h2 class="text-xl font-bold text-color-dark flex items-center gap-2 mb-4">
-                <Image size={24} class="text-color-main" />
+        <div class="bg-white rounded-xl sm:rounded-2xl shadow-md p-4 sm:p-6">
+            <h2 class="text-lg sm:text-xl font-bold text-color-dark flex items-center gap-2 mb-3 sm:mb-4">
+                <Image size={20} class="sm:w-6 sm:h-6 text-color-main" />
                 Photos du voyage
             </h2>
-            
+
             <Show when={!props.isEditing}>
-                <Show 
+                <Show
                     when={props.media && props.media.length > 0}
                     fallback={
-                        <div class="text-center py-8">
-                            <p class="text-color-dark opacity-50">Aucune photo pour le moment</p>
+                        <div class="text-center py-6 sm:py-8">
+                            <p class="text-color-dark opacity-50 text-sm sm:text-base">Aucune photo pour le moment</p>
                         </div>
                     }
                 >
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4">
                         <For each={props.media}>
                             {(media: any) => (
                                 <div class="relative aspect-square rounded-xl overflow-hidden border-2 border-gray-200 shadow-md bg-white">
-                                    <img 
-                                        src={media.url} 
-                                        alt="Photo du voyage" 
+                                    <img
+                                        src={media.url}
+                                        alt="Photo du voyage"
                                         class="w-full h-full object-cover block"
                                     />
                                 </div>
@@ -49,46 +49,46 @@ export const TripPhotos = (props: TripPhotosProps) => {
             <Show when={props.isEditing}>
                 <div>
                     <Show when={props.allEditMedia().length > 0}>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
                             <For each={props.allEditMedia()}>
                                 {(media, index) => (
                                     <div class="relative group aspect-square rounded-xl overflow-hidden border-2 border-gray-200 shadow-md bg-white">
-                                        <img 
-                                            src={media.url} 
-                                            alt="Photo du voyage" 
+                                        <img
+                                            src={media.url}
+                                            alt="Photo du voyage"
                                             class="w-full h-full object-cover block"
                                         />
                                         <div class="absolute inset-0 group-hover:bg-black/60 transition-all duration-300 flex flex-col items-center justify-center gap-2">
-                                            <div class="opacity-0 group-hover:opacity-100 flex gap-2 transition-opacity duration-300">
+                                            <div class="opacity-100 sm:opacity-0 group-hover:opacity-100 flex gap-2 transition-opacity duration-300">
                                                 <button
                                                     onClick={() => props.onMoveLeft(index())}
                                                     disabled={index() === 0}
-                                                    class="bg-white text-color-main p-2 rounded-full hover:bg-color-main hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                                                    class="bg-white text-color-main p-1.5 sm:p-2 rounded-full hover:bg-color-main hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                                                 >
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                                                     </svg>
                                                 </button>
                                                 <button
                                                     onClick={() => props.onMoveRight(index())}
                                                     disabled={index() === props.allEditMedia().length - 1}
-                                                    class="bg-white text-color-main p-2 rounded-full hover:bg-color-main hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                                                    class="bg-white text-color-main p-1.5 sm:p-2 rounded-full hover:bg-color-main hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                                                 >
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                                     </svg>
                                                 </button>
                                             </div>
                                             <button
                                                 onClick={() => props.onRemove(media.id, media.isTemporary)}
-                                                class="opacity-0 group-hover:opacity-100 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-all pointer-events-auto"
+                                                class="opacity-100 sm:opacity-0 group-hover:opacity-100 bg-red-500 text-white p-1.5 sm:p-2 rounded-full hover:bg-red-600 transition-all pointer-events-auto"
                                             >
-                                                <X size={20} />
+                                                <X size={16} class="sm:w-5 sm:h-5" />
                                             </button>
                                         </div>
                                         <Show when={index() === 0}>
                                             <div class="absolute top-2 left-2 bg-color-main px-2 py-1 rounded-full">
-                                                <span class="text-xs font-bold text-white">Photo principale</span>
+                                                <span class="text-[10px] sm:text-xs font-bold text-white">Principale</span>
                                             </div>
                                         </Show>
                                     </div>
@@ -98,14 +98,14 @@ export const TripPhotos = (props: TripPhotosProps) => {
                     </Show>
 
                     <Show when={props.allEditMedia().length < 10}>
-                        <label class="w-full py-4 px-6 border-2 border-dashed border-gray-300 rounded-xl bg-white hover:border-color-main transition-all cursor-pointer flex items-center justify-center gap-3 text-gray-500 hover:text-color-main">
-                            <Camera size={24} />
+                        <label class="w-full py-3 sm:py-4 px-4 sm:px-6 border-2 border-dashed border-gray-300 rounded-xl bg-white hover:border-color-main transition-all cursor-pointer flex items-center justify-center gap-2 sm:gap-3 text-gray-500 hover:text-color-main text-sm sm:text-base">
+                            <Camera size={20} class="sm:w-6 sm:h-6" />
                             <span>Ajouter des photos ({props.allEditMedia().length}/10)</span>
-                            <input 
-                                type="file" 
-                                accept="image/*" 
+                            <input
+                                type="file"
+                                accept="image/*"
                                 multiple
-                                class="hidden" 
+                                class="hidden"
                                 onChange={props.onFileSelect}
                                 disabled={props.isUploadingMedia()}
                             />
@@ -115,12 +115,12 @@ export const TripPhotos = (props: TripPhotosProps) => {
                     <Show when={props.isUploadingMedia()}>
                         <div class="mt-4 flex items-center justify-center gap-3 text-color-main">
                             <span class="loading loading-spinner loading-md"></span>
-                            <span class="font-semibold">Upload en cours...</span>
+                            <span class="font-semibold text-sm sm:text-base">Upload en cours...</span>
                         </div>
                     </Show>
 
                     <Show when={props.uploadError()}>
-                        <div class="mt-4 bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl text-center">
+                        <div class="mt-4 bg-red-50 border border-red-200 text-red-600 p-3 sm:p-4 rounded-xl text-center text-sm sm:text-base">
                             {props.uploadError()}
                         </div>
                     </Show>

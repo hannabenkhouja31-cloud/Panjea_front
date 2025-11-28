@@ -37,36 +37,36 @@ const COUNTRIES = [
 export const CreateTripStep1 = (props: CreateTripStep1Props) => {
     return (
         <div class="w-full max-w-2xl mx-auto">
-            <div class="flex items-center justify-between mb-8">
-                <div class="flex items-center gap-3">
-                    <Globe size={32} class="text-color-main" />
-                    <h3 class="text-2xl font-bold text-color-dark">Nouveau voyage</h3>
+            <div class="flex items-center justify-between mb-4 sm:mb-8">
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <Globe class="w-6 h-6 sm:w-8 sm:h-8 text-color-main" />
+                    <h3 class="text-xl sm:text-2xl font-bold text-color-dark">Nouveau voyage</h3>
                 </div>
-                <span class="text-gray-500 font-medium">Étape {props.currentStep}/5</span>
+                <span class="text-sm sm:text-base text-gray-500 font-medium">Étape {props.currentStep}/5</span>
             </div>
-            
-            <div class="space-y-6">
+
+            <div class="space-y-4 sm:space-y-6">
                 <div>
-                    <label class="block text-color-dark font-semibold mb-3 text-lg">
+                    <label class="block text-color-dark font-semibold mb-2 sm:mb-3 text-base sm:text-lg">
                         Titre du voyage *
                     </label>
                     <input
                         type="text"
                         value={props.title}
                         onInput={(e) => props.setTitle(e.target.value)}
-                        class="w-full px-5 py-4 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent bg-white text-color-dark"
+                        class="w-full px-3 py-3 sm:px-5 sm:py-4 text-sm sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent bg-white text-color-dark"
                         placeholder="Ex: Aventure au Costa Rica"
                     />
                 </div>
 
                 <div>
-                    <label class="block text-color-dark font-semibold mb-3 text-lg">
+                    <label class="block text-color-dark font-semibold mb-2 sm:mb-3 text-base sm:text-lg">
                         Pays de destination *
                     </label>
                     <select
                         value={props.destinationCountry}
                         onChange={(e) => props.setDestinationCountry(e.target.value)}
-                        class="w-full px-5 py-4 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent bg-white text-color-dark"
+                        class="w-full px-3 py-3 sm:px-5 sm:py-4 text-sm sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent bg-white text-color-dark"
                     >
                         <option value="" disabled class="text-gray-400">Sélectionnez un pays</option>
                         <For each={COUNTRIES}>
@@ -76,13 +76,13 @@ export const CreateTripStep1 = (props: CreateTripStep1Props) => {
                 </div>
 
                 <div>
-                    <label class="block text-color-dark font-semibold mb-3 text-lg">
+                    <label class="block text-color-dark font-semibold mb-2 sm:mb-3 text-base sm:text-lg">
                         Résumé du voyage (optionnel)
                     </label>
                     <textarea
                         value={props.summary}
                         onInput={(e) => props.setSummary(e.target.value)}
-                        class="w-full px-5 py-4 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent resize-none bg-white text-color-dark"
+                        class="w-full px-3 py-3 sm:px-5 sm:py-4 text-sm sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent resize-none bg-white text-color-dark"
                         rows={4}
                         placeholder="Décrivez votre voyage en quelques mots..."
                     />
