@@ -11,29 +11,29 @@ export const RegularMessage = (props: RegularMessageProps) => {
     const isMine = props.message.sender.id === user.profile?.id;
 
     return (
-        <div class={`flex ${isMine ? "justify-end" : "justify-start"} items-end gap-2 mb-4`}>
+        <div class={`flex ${isMine ? "justify-end" : "justify-start"} items-end gap-2 mb-3 sm:mb-4 px-2 sm:px-4`}>
             <Show when={!isMine}>
-                <div class="w-8 h-8 rounded-full bg-black border-2 border-black flex items-center justify-center flex-shrink-0 overflow-hidden">
-                    <Show 
+                <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-black border-2 border-black flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <Show
                         when={props.message.sender.profilePictureUrl}
                         fallback={
-                            <span class="text-white font-bold text-sm">
+                            <span class="text-white font-bold text-xs sm:text-sm">
                                 {props.message.sender.username[0].toUpperCase()}
                             </span>
                         }
                     >
-                        <img 
-                            src={props.message.sender.profilePictureUrl} 
+                        <img
+                            src={props.message.sender.profilePictureUrl}
                             alt={props.message.sender.username}
                             class="w-full h-full object-cover"
                         />
                     </Show>
                 </div>
             </Show>
-            <div class="relative">
-                <div class={`max-w-md ${isMine ? "bg-color-main text-white" : "bg-gray-200 text-color-dark"} rounded-2xl px-4 py-3`}>
+            <div class="relative max-w-[85%] sm:max-w-md">
+                <div class={`${isMine ? "bg-color-main text-white" : "bg-gray-200 text-color-dark"} rounded-2xl px-3 py-2 sm:px-4 sm:py-3`}>
                     <Show when={!isMine}>
-                        <p class="font-semibold text-xs mb-1">
+                        <p class="font-semibold text-[10px] sm:text-xs mb-1">
                             {props.message.sender.username === 'Utilisateur supprimé' ? (
                                 <span class="text-gray-500 italic">{props.message.sender.username}</span>
                             ) : (
@@ -41,15 +41,15 @@ export const RegularMessage = (props: RegularMessageProps) => {
                             )}
                         </p>
                     </Show>
-                    <p class="whitespace-pre-line">{props.message.content}</p>
+                    <p class="whitespace-pre-line text-sm sm:text-base">{props.message.content}</p>
                     <div class="flex items-center justify-end gap-1 mt-1">
-                        <span class={`text-xs ${isMine ? "text-white opacity-70" : "text-gray-500"}`}>
+                        <span class={`text-[10px] sm:text-xs ${isMine ? "text-white opacity-70" : "text-gray-500"}`}>
                             {formatTime(props.message.createdAt)}
                         </span>
                     </div>
                 </div>
                 <Show when={!isMine}>
-                    <div 
+                    <div
                         class="absolute -rotate-45 -bottom-[8px] -left-[2px] w-0 h-0"
                         style={{
                             "border-top": "12px solid transparent",
@@ -59,7 +59,7 @@ export const RegularMessage = (props: RegularMessageProps) => {
                     />
                 </Show>
                 <Show when={isMine}>
-                    <div 
+                    <div
                         class="absolute rotate-45 -bottom-[8px] -right-[2px] w-2 h-2"
                         style={{
                             "border-top": "12px solid transparent",

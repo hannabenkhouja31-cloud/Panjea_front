@@ -37,7 +37,7 @@ export const MessageItem = (props: MessageItemProps) => {
             </Show>
 
             <Show when={isQuestion}>
-                <QuestionMessage 
+                <QuestionMessage
                     message={props.message}
                     isUserTrip={props.isUserTrip}
                     onAnswer={props.onAnswerQuestion}
@@ -53,7 +53,7 @@ export const MessageItem = (props: MessageItemProps) => {
             </Show>
 
             <Show when={isJoinRequest}>
-                <JoinRequestMessage 
+                <JoinRequestMessage
                     message={props.message}
                     trip={props.trip}
                     isUserTrip={props.isUserTrip}

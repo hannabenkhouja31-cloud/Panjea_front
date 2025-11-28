@@ -23,7 +23,7 @@ export const ConversationsList = (props: ConversationsListProps) => {
 
     const handleConversationSelect = (tripItem: Trip) => {
         const currentUserId = user.profile?.id;
-        
+
         if (!currentUserId) {
             props.onSelect(tripItem);
             return;
@@ -38,7 +38,7 @@ export const ConversationsList = (props: ConversationsListProps) => {
         let mostRecentUnreadMessageId: string | null = null;
         for (const message of messages) {
             const isSentByMe = message.sender.id === currentUserId;
-            
+
             if (isSentByMe) {
                 break;
             }
@@ -57,7 +57,7 @@ export const ConversationsList = (props: ConversationsListProps) => {
                     console.error("Échec de la mise à jour 'lu' en arrière-plan:", err);
                 });
         }
-        
+
         props.onSelect(tripItem);
     };
 
@@ -66,10 +66,10 @@ export const ConversationsList = (props: ConversationsListProps) => {
         if (!currentUserId) return null;
 
         const count = getUnreadCountForTrip(tripId, currentUserId);
-        
+
         if (count === 0) return null;
         if (count >= 10) return '10+';
-        
+
         return count.toString();
     };
 
@@ -114,10 +114,10 @@ export const ConversationsList = (props: ConversationsListProps) => {
 
         if (currentUserId && trips.length > 0) {
             joinMultipleTripRooms(trips, currentUserId);
-            
+
             trips.forEach(trip => {
                 const meta = messagesStore.metaByTrip[trip.id];
-                
+
                 if (!meta) {
                     getMessagesByTripId(trip.id, currentUserId, 1)
                         .catch(err => {
@@ -135,122 +135,117 @@ export const ConversationsList = (props: ConversationsListProps) => {
         if (msg.questionData) {
             if (msg.questionData.type === 'question') {
                 if (isUserTrip(tripItem.organizerId)) {
-                    return { 
-                        text: `Question de ${msg.sender.username}`, 
-                        isNotification: true 
+                    return {
+                        text: `Question de ${msg.sender.username}`,
+                        isNotification: true
                     };
                 } else {
-                    return { 
+                    return {
                         text: `Votre question`,
                         isNotification: true
                     };
                 }
             } else if (msg.questionData.type === 'answer') {
                 if (isUserTrip(tripItem.organizerId)) {
-                    return { 
-                        text: `Vous avez répondu`, 
-                        isNotification: true 
+                    return {
+                        text: `Vous avez répondu`,
+                        isNotification: true
                     };
                 } else {
-                    return { 
+                    return {
                         text: `Réponse de ${msg.sender.username}`,
                         isNotification: true
                     };
                 }
             }
         }
-        
-        return { 
-            text: `${msg.sender.username}: ${msg.content}`, 
-            isNotification: false 
+
+        return {
+            text: `${msg.sender.username}: ${msg.content}`,
+            isNotification: false
         };
     };
 
     return (
-        <div class="border-r-2 border-black w-1/4 flex flex-col h-full">
-            <div class="p-4 border-b-2 border-black flex items-center min-h-[7vh] flex-shrink-0">
-                <h2 class="text-xl font-bold text-color-dark">Conversations</h2>
-            </div>
-            <div class="flex-1 overflow-y-auto">
-                <For each={sortedTrips()}>
-                    {(tripItem) => {
-                        const lastMessage = () => getLastMessage(tripItem.id);
-                        const unreadCount = () => getNumberOfUnreadMessage(tripItem.id);
-                        const lastMessageFormatted = () => formattedLastMessage(tripItem);
+        <div class="flex-1 overflow-y-auto w-full">
+            <For each={sortedTrips()}>
+                {(tripItem) => {
+                    const lastMessage = () => getLastMessage(tripItem.id);
+                    const unreadCount = () => getNumberOfUnreadMessage(tripItem.id);
+                    const lastMessageFormatted = () => formattedLastMessage(tripItem);
 
-                        return (
-                            <div
-                                onClick={() => handleConversationSelect(tripItem)}
-                                class={` p-4 border-b cursor-pointer transition-colors ${
-                                    props.selectedTrip?.id === tripItem.id
-                                        ? "bg-color-main border-color-main" 
-                                        : "border-gray-200 hover:bg-color-light"
-                                }`}
-                            >
-                                <div class="flex items-start gap-3">
-                                    <img 
-                                        src={getFirstTripImage(tripItem)}
-                                        alt={tripItem.title}
-                                        class={`w-12 h-12 rounded-lg object-cover flex-shrink-0 ${
-                                            props.selectedTrip?.id === tripItem.id ? "border-2 border-white" : "border-2 border-black"
-                                        }`}
-                                    />
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-start justify-between gap-2 mb-1">
-                                            <div class="flex-1 min-w-0">
-                                                <h3 class={`font-bold truncate ${
-                                                    props.selectedTrip?.id === tripItem.id ? "text-white" : "text-color-dark"
+                    return (
+                        <div
+                            onClick={() => handleConversationSelect(tripItem)}
+                            class={`p-3 sm:p-4 border-b cursor-pointer transition-colors ${
+                                props.selectedTrip?.id === tripItem.id
+                                    ? "bg-color-main border-color-main"
+                                    : "border-gray-200 hover:bg-color-light bg-white"
+                            }`}
+                        >
+                            <div class="flex items-start gap-3">
+                                <img
+                                    src={getFirstTripImage(tripItem)}
+                                    alt={tripItem.title}
+                                    class={`w-12 h-12 rounded-lg object-cover flex-shrink-0 ${
+                                        props.selectedTrip?.id === tripItem.id ? "border-2 border-white" : "border-2 border-black"
+                                    }`}
+                                />
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-start justify-between gap-2 mb-1">
+                                        <div class="flex-1 min-w-0">
+                                            <h3 class={`font-bold truncate text-sm sm:text-base ${
+                                                props.selectedTrip?.id === tripItem.id ? "text-white" : "text-color-dark"
+                                            }`}>
+                                                {tripItem.title}
+                                            </h3>
+                                            {isUserTrip(tripItem.organizerId) && (
+                                                <span class={`inline-block text-[10px] sm:text-xs px-2 py-0.5 rounded-full mt-1 ${
+                                                    props.selectedTrip?.id === tripItem.id
+                                                        ? "bg-white text-color-main"
+                                                        : "bg-color-main text-white"
                                                 }`}>
-                                                    {tripItem.title}
-                                                </h3>
-                                                {isUserTrip(tripItem.organizerId) && (
-                                                    <span class={`inline-block text-xs px-2 py-0.5 rounded-full mt-1 ${
-                                                        props.selectedTrip?.id === tripItem.id 
-                                                            ? "bg-white text-color-main" 
-                                                            : "bg-color-main text-white"
-                                                    }`}>
-                                                        Mon voyage
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <Show when={lastMessage()}>
-                                                <span class={`text-xs flex-shrink-0 ${
-                                                    props.selectedTrip?.id === tripItem.id ? "text-white opacity-80" : "text-gray-500"
-                                                }`}>
-                                                    {formatTime(lastMessage()!.createdAt)}
-                                                </span>
-                                            </Show>
+                                Mon voyage
+                            </span>
+                                            )}
                                         </div>
-                                        <div class={`relative top-1 pr-8 text-sm truncate flex items-center gap-1.5 ${
-                                            props.selectedTrip?.id === tripItem.id ? "text-white/80" : "text-black/60"
-                                        }`}>
-                                            <Show when={lastMessageFormatted().isNotification}>
-                                                <MessageSquare size={14} class={
-                                                    props.selectedTrip?.id === tripItem.id 
-                                                        ? "text-white/80" 
-                                                        : "text-color-secondary"
-                                                } />
-                                            </Show>
-                                            <span class="truncate">
-                                                {lastMessageFormatted().text}
-                                            </span>
-                                            <Show when={unreadCount()}>
-                                                {(count) => (
-                                                    <div class="absolute right-1 top-0 bottom-0 flex items-center justify-center">
-                                                        <div class="min-w-[20px] h-5 px-1 bg-color-secondary rounded-full flex items-center justify-center text-white text-xs font-medium">
-                                                            {count()}
-                                                        </div>
+                                        <Show when={lastMessage()}>
+                        <span class={`text-[10px] sm:text-xs flex-shrink-0 ${
+                            props.selectedTrip?.id === tripItem.id ? "text-white opacity-80" : "text-gray-500"
+                        }`}>
+                            {formatTime(lastMessage()!.createdAt)}
+                        </span>
+                                        </Show>
+                                    </div>
+                                    <div class={`relative top-0 sm:top-1 pr-8 text-xs sm:text-sm truncate flex items-center gap-1.5 ${
+                                        props.selectedTrip?.id === tripItem.id ? "text-white/80" : "text-black/60"
+                                    }`}>
+                                        <Show when={lastMessageFormatted().isNotification}>
+                                            <MessageSquare size={14} class={
+                                                props.selectedTrip?.id === tripItem.id
+                                                    ? "text-white/80"
+                                                    : "text-color-secondary"
+                                            } />
+                                        </Show>
+                                        <span class="truncate">
+                        {lastMessageFormatted().text}
+                    </span>
+                                        <Show when={unreadCount()}>
+                                            {(count) => (
+                                                <div class="absolute right-1 top-0 bottom-0 flex items-center justify-center">
+                                                    <div class="min-w-[18px] h-[18px] sm:min-w-[20px] sm:h-5 px-1 bg-color-secondary rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs font-medium">
+                                                        {count()}
                                                     </div>
-                                                )}
-                                            </Show>
-                                        </div>
+                                                </div>
+                                            )}
+                                        </Show>
                                     </div>
                                 </div>
                             </div>
-                        );
-                    }}
-                </For>
-            </div>
+                        </div>
+                    );
+                }}
+            </For>
         </div>
     );
 };

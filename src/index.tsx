@@ -15,10 +15,10 @@ import {
 } from './stores/userStore.ts';
 import { loader, startLoading, stopLoading } from './stores/loaderStore.ts';
 import { getAllTrips } from './stores/tripStore.ts';
-import { ConversationsPage } from './pages/Conversations/ConversationsPage.tsx';
+import { ConversationsPage } from './pages/Conversations';
 import { disconnectSocket, initSocket, joinMultipleTripRooms, identifyUser, resetSocket } from './stores/websocketStore.ts';
 import { getMessagesByTripId, getUnansweredQuestions } from './stores/messagesStore.ts';
-import type { Trip } from './models/trip.model.ts';
+import type { Trip } from './models';
 import AdminPage from './pages/Admin/AdminPage.tsx';
 import { checkUserBanStatus } from './utils/banUtils.ts';
 import BannedPage from './pages/SignPage/BannedPage.tsx';
