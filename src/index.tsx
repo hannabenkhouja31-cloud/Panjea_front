@@ -184,7 +184,7 @@ const Layout = (props:any) => {
             <Show when={!backend.isConnected}>
                 <div class={"flex gap-8 flex-col items-center justify-center bg-color-light w-screen h-screen"}>
                     <img src="/logoMain.avif" alt="" class='w-32 h-32'/>
-                    <h1 class='text-black text-2xl font-semibold'>
+                    <h1 class='text-black text-2xl font-semibold text-center'>
                         Panjéa est actuellement en maintenance, veuillez-revenir d'ici quelques minutes...
                     </h1>
                 </div>
