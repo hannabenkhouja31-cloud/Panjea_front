@@ -21,12 +21,14 @@ export const SignUpPage = () => {
     const [showPassword, setShowPassword] = createSignal(false);
     const [showConfirmPassword, setShowConfirmPassword] = createSignal(false);
     const [bubbleMessage, setBubbleMessage] = createSignal(false);
+    const [isEmailLocked, setIsEmailLocked] = createSignal(false); // 👈 NOUVEAU
 
     onMount(() => {
         if (location.state?.fromBubble) {
             setBubbleMessage(true);
             if (location.state?.email) {
                 setEmail(location.state.email);
+                setIsEmailLocked(true);
             }
         }
     });
@@ -81,6 +83,9 @@ export const SignUpPage = () => {
                         <div class="bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-xl mb-8 text-base">
                             👋 Bienvenue ! Vous aviez déjà un compte sur l'ancienne version de Panjéa.
                             Veuillez créer un nouveau mot de passe pour finaliser la migration de votre compte.
+                            {/* 👇 NOUVEAU MESSAGE */}
+                            <br/><br/>
+                            <strong>⚠️ Important :</strong> Vous devez utiliser l'adresse email ci-dessous (celle de votre ancien compte).
                         </div>
                     )}
 
@@ -97,10 +102,18 @@ export const SignUpPage = () => {
                                 type="email"
                                 value={email()}
                                 onInput={(e) => setEmail(e.target.value)}
-                                class="w-full px-2 sm:px-5 py-3 sm:py-4 text-sm sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition"
+                                disabled={isEmailLocked()}
+                                class={`w-full px-2 sm:px-5 py-3 sm:py-4 text-sm sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-color-main focus:border-transparent transition ${
+                                    isEmailLocked() ? 'bg-gray-100 cursor-not-allowed' : ''
+                                }`}
                                 placeholder="exemple@email.com"
                                 required
                             />
+                            {isEmailLocked() && (
+                                <p class="text-sm text-gray-600 mt-2">
+                                    🔒 Cette adresse email est celle de votre ancien compte Panjéa et ne peut pas être modifiée.
+                                </p>
+                            )}
                         </div>
 
                         <div>
