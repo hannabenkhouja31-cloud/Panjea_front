@@ -1,5 +1,6 @@
 import { createSignal, onMount, Show, createEffect } from "solid-js";
 import { useNavigate, useSearchParams } from "@solidjs/router";
+import { Mail, CheckCircle } from "lucide-solid";
 import { SUPPORTED_LANGUAGES, type BudgetLevel, type LanguageCode } from "../../models";
 import { deleteAccount, updateProfile, user } from "../../stores/userStore";
 import { backend } from "../../stores/configStore";
@@ -13,12 +14,15 @@ import { ProfileModals } from "./ProfileModals";
 
 export const ProfilePage = () => {
 
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const navigate = useNavigate();
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [editAge, setEditAge] = createSignal<number | undefined>(undefined);
     const [verificationMessage, setVerificationMessage] = createSignal<{text: string, type: 'success' | 'error'} | null>(null);
     const [ageError, setAgeError] = createSignal("");
+    const [resendLoading, setResendLoading] = createSignal(false);
+    const [resendMessage, setResendMessage] = createSignal<{text: string, type: 'success' | 'error'} | null>(null);
 
     onMount(() => {
 
@@ -111,6 +115,27 @@ export const ProfilePage = () => {
             setHasChanges(false);
         }
     });
+
+    const resendVerificationEmail = async () => {
+        setResendLoading(true);
+        setResendMessage(null);
+        try {
+            const response = await fetch(backendUrl + "/email-verification/resend", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId: user.profile?.id }),
+            });
+            if (response.ok) {
+                setResendMessage({ text: "Email de vérification envoyé !", type: "success" });
+            } else {
+                setResendMessage({ text: "Erreur lors de l'envoi. Réessaie plus tard.", type: "error" });
+            }
+        } catch {
+            setResendMessage({ text: "Erreur réseau. Réessaie plus tard.", type: "error" });
+        } finally {
+            setResendLoading(false);
+        }
+    };
 
     const travelTypes = () => {
         if (!backend.travelTypes || !user.profile?.travelTypes) return [];
@@ -242,6 +267,33 @@ export const ProfilePage = () => {
                             : 'bg-red-50 border border-red-200 text-red-600'
                     }`}>
                         {verificationMessage()?.text}
+                    </div>
+                </Show>
+
+                <Show when={user.isConnected && user.profile?.emailVerified === false}>
+                    <div class="mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl border border-orange-300 bg-orange-50 flex flex-col sm:flex-row items-center gap-3">
+                        <div class="flex items-center gap-2 flex-1 text-orange-700 text-sm sm:text-base font-semibold">
+                            <Mail size={18} />
+                            <span>Ton email n'est pas encore vérifié. Vérifie ta boîte mail ou renvoie un email de vérification.</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <button
+                                onClick={resendVerificationEmail}
+                                disabled={resendLoading()}
+                                class={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 whitespace-nowrap ${
+                                    resendLoading()
+                                        ? "bg-orange-200 text-orange-400 cursor-not-allowed"
+                                        : "bg-orange-500 text-white hover:bg-orange-600 cursor-pointer"
+                                }`}
+                            >
+                                {resendLoading() ? "Envoi..." : "Renvoyer l'email"}
+                            </button>
+                            <Show when={resendMessage()}>
+                                <span class={`text-xs font-medium ${resendMessage()?.type === 'success' ? 'text-green-600' : 'text-red-500'}`}>
+                                    {resendMessage()?.text}
+                                </span>
+                            </Show>
+                        </div>
                     </div>
                 </Show>
 
