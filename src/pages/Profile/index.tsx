@@ -1,6 +1,6 @@
 import { createSignal, onMount, Show, createEffect } from "solid-js";
 import { useNavigate, useSearchParams } from "@solidjs/router";
-import { Mail, CheckCircle } from "lucide-solid";
+import { Mail } from "lucide-solid";
 import { SUPPORTED_LANGUAGES, type BudgetLevel, type LanguageCode } from "../../models";
 import { deleteAccount, updateProfile, user } from "../../stores/userStore";
 import { backend } from "../../stores/configStore";
@@ -270,7 +270,7 @@ export const ProfilePage = () => {
                     </div>
                 </Show>
 
-                <Show when={user.isConnected && user.profile?.emailVerified === false}>
+                <Show when={user.isConnected && user.profile?.isVerified === false}>
                     <div class="mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl border border-orange-300 bg-orange-50 flex flex-col sm:flex-row items-center gap-3">
                         <div class="flex items-center gap-2 flex-1 text-orange-700 text-sm sm:text-base font-semibold">
                             <Mail size={18} />
