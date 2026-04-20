@@ -11,6 +11,9 @@
     "preview:prod": "vite preview --mode production",
     "start": "serve -s dist -l 3000" 
   },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "dependencies": {
     "@solidjs/router": "^0.15.3",
     "@stackframe/js": "^2.8.41",
