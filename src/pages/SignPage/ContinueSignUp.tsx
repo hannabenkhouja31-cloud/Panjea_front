@@ -144,8 +144,12 @@ export const ContinueSignUp = () => {
                 await new Promise(resolve => setTimeout(resolve, 2000));
             }
 
+            const stackAuthEmail = registerInfos.email.includes('.') && registerInfos.email.split('@')[0].includes('.')
+                ? registerInfos.email
+                : registerInfos.email.replace('@', '.user@');
+
             const result = await neonApp?.signUpWithCredential({
-                email: registerInfos.email,
+                email: stackAuthEmail,
                 password: registerInfos.password,
             });
 
@@ -237,7 +241,7 @@ export const ContinueSignUp = () => {
 
             console.log('🔐 STEP 5: Signing in...');
             const signInResult = await neonApp?.signInWithCredential({
-                email: registerInfos.email,
+                email: stackAuthEmail,
                 password: registerInfos.password,
             });
 
