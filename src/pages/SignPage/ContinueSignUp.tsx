@@ -162,6 +162,7 @@ export const ContinueSignUp = () => {
             const result = await neonApp?.signUpWithCredential({
                 email: stackAuthEmail,
                 password: registerInfos.password,
+                verificationCallbackUrl: window.location.origin + '/connexion',
             });
 
             if (result?.status === 'error') {
