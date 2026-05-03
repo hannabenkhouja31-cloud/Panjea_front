@@ -68,7 +68,10 @@ export const ContinueSignUp = () => {
     onMount(async () => {
         const registerInfos = user.registerInfos;
 
-        if (!registerInfos.email) return;
+        if (!registerInfos.email) {
+            navigate("/inscription", { replace: true });
+            return;
+        }
 
         const userData = await getUserFromDatabaseWithEmail(registerInfos.email);
 
@@ -142,6 +145,12 @@ export const ContinueSignUp = () => {
 
             if (bubbleCheck.success && bubbleCheck.data && bubbleCheck.data.isFromBubble) {
                 await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+
+            if (!registerInfos.email) {
+                navigate("/inscription", { replace: true });
+                stopLoading();
+                return;
             }
 
             const stackAuthEmail = registerInfos.email.includes('.') && registerInfos.email.split('@')[0].includes('.')
