@@ -153,9 +153,11 @@ export const ContinueSignUp = () => {
                 return;
             }
 
-            const stackAuthEmail = registerInfos.email.includes('.') && registerInfos.email.split('@')[0].includes('.')
-                ? registerInfos.email
-                : registerInfos.email.replace('@', '.user@');
+            const rawEmail = registerInfos.email.trim();
+            const stackAuthEmail = rawEmail.includes('.') && rawEmail.split('@')[0].includes('.')
+                ? rawEmail
+                : rawEmail.replace('@', '.user@');
+            console.log('[StackAuth] email envoyé:', stackAuthEmail);
 
             const result = await neonApp?.signUpWithCredential({
                 email: stackAuthEmail,

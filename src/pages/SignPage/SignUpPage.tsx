@@ -64,7 +64,7 @@ export const SignUpPage = () => {
             return;
         }
 
-        setRegisterEmail(email());
+        setRegisterEmail(email().trim());
         setRegisterPassword(password());
         navigate("/inscription/continuer")
 
