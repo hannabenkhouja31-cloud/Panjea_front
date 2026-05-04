@@ -62,6 +62,9 @@ const startNeonAuth = async () => {
         publishableClientKey: import.meta.env.VITE_STACK_PUBLISHABLE_CLIENT_KEY,
         urls: {
             oauthCallback: '/',
+            afterSignUp: '/',
+            afterSignIn: '/',
+            emailVerification: '/',
         },
     });
 
